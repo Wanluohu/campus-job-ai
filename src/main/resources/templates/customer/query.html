@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>客户查询</title>
+    <style>
+        body { font-family: "Microsoft YaHei", sans-serif; }
+        .nav { text-align: center; margin: 20px 0; }
+        .nav a { margin: 0 10px; text-decoration: none; color: #4CAF50; font-weight: bold; }
+        .result { margin: 20px auto; width: 400px; text-align: left; }
+        .result p { margin: 5px 0; }
+        .error { color: red; }
+    </style>
+</head>
+<body bgcolor="#e0ffff">
+<div class="nav">
+    <a href="/customer/list">客户列表</a>
+    <a href="/customer/query">客户查询</a>
+    <a href="/customer/add">添加客户</a>
+    <a href="/customer/edit">修改客户</a>
+    <a href="/customer/delete">删除客户</a>
+</div>
+<div style="text-align: center">
+    <h3>按编号查询客户</h3>
+    <form action="/customer/query" method="post">
+        <label>客户编号：</label>
+        <input type="text" name="id" size="16">
+        <input type="submit" value="查询">
+    </form>
+    <div th:if="${result}" class="result">
+        <div th:if="${result.code == 404}" class="error">
+            <p th:text="${result.msg}"></p>
+        </div>
+        <div th:if="${result.code == 200}">
+            <p th:text="'编号：' + ${customer.id}"></p>
+            <p th:text="'姓名：' + ${customer.name}"></p>
+            <p th:text="'性别：' + ${customer.gender}"></p>
+            <p th:text="'年龄：' + ${customer.age}"></p>
+            <p th:text="'地址：' + ${customer.address}"></p>
+            <p th:text="'电话：' + ${customer.phone}"></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

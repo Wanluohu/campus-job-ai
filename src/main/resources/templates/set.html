@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>修改库存</title>
+</head>
+<body bgcolor="#e0ffff">
+<br>
+<div style="text-align: center">
+    <h3>修改食品库存</h3>
+    <form action="/setform" method="post">
+        <table style="text-align: center;margin: auto">
+            <tr><td>食品ID：</td><td><input type="text" name="id"></td></tr>
+            <tr><td>新库存量：</td><td><input type="text" name="price"></td></tr>
+        </table>
+        <br>
+        <input type="submit" value="更新库存">&nbsp;&nbsp;
+    </form>
+</div>
+</body>
+</html>

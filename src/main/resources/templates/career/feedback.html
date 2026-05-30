@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>意见反馈 - 校园求职助手</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f5f5f5;min-height:100vh}
+        .section{padding:16px}
+        .card{background:#fff;border-radius:14px;padding:20px}
+        .card-title{font-size:17px;font-weight:600;color:#1a1a2e;margin-bottom:16px;display:block}
+        .form-group{margin-bottom:14px}
+        .form-label{display:block;font-size:13px;font-weight:600;color:#333;margin-bottom:5px}
+        select,textarea,input{width:100%;padding:11px 12px;border-radius:8px;border:2px solid #e0e0e0;font-size:14px;color:#333;font-family:inherit}
+        select:focus,textarea:focus,input:focus{border-color:#667eea;outline:none}
+        textarea{min-height:100px;resize:vertical}
+        .star-row{display:flex;gap:8px}
+        .star-btn{font-size:32px;cursor:pointer;transition:transform .15s;color:#ddd;background:none;border:none;padding:0}
+        .star-btn.active{color:#f5a623;transform:scale(1.1)}
+        .btn{display:block;width:100%;padding:14px;border-radius:12px;font-size:16px;font-weight:600;border:none;color:#fff;background:linear-gradient(135deg,#667eea,#764ba2);cursor:pointer}
+        .btn:active{opacity:.8}
+        .success-msg{text-align:center;padding:30px;display:none}
+        .success-icon{font-size:60px;margin-bottom:12px}
+        .success-text{font-size:18px;font-weight:600;color:#1a1a2e;margin-bottom:8px}
+        .success-sub{font-size:13px;color:#888}
+        .hidden{display:none}
+    </style>
+</head>
+<body>
+    <div th:replace="career/fragments/topnav :: body"></div>
+
+    <div class="section" id="formSection">
+        <div class="card">
+            <span class="card-title">💬 意见反馈</span>
+
+            <div class="form-group">
+                <span class="form-label">评分</span>
+                <div class="star-row" id="starRow">
+                    <button class="star-btn" onclick="setRating(1)">☆</button>
+                    <button class="star-btn" onclick="setRating(2)">☆</button>
+                    <button class="star-btn" onclick="setRating(3)">☆</button>
+                    <button class="star-btn" onclick="setRating(4)">☆</button>
+                    <button class="star-btn" onclick="setRating(5)">☆</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <span class="form-label">哪个功能</span>
+                <select id="pageSelect">
+                    <option value="综合">综合</option>
+                    <option value="resume">简历优化</option>
+                    <option value="interview">面试模拟</option>
+                    <option value="jobmatch">兼职匹配</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <span class="form-label">建议或问题</span>
+                <textarea id="suggestion" placeholder="说说你的想法..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <span class="form-label">联系方式（选填）</span>
+                <input id="contact" placeholder="微信/邮箱，方便我们回复">
+            </div>
+
+            <button class="btn" onclick="submitFeedback()">📩 提交反馈</button>
+        </div>
+    </div>
+
+    <!-- 成功提示 -->
+    <div class="section hidden" id="successSection">
+        <div class="card">
+            <div class="success-msg" style="display:block">
+                <div class="success-icon">🎉</div>
+                <div class="success-text">感谢你的反馈！</div>
+                <div class="success-sub">我们会认真考虑每一条建议</div>
+                <button class="btn" style="margin-top:20px" onclick="location.reload()">🔄 继续反馈</button>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        var rating = 0;
+
+        function setRating(n) {
+            rating = n;
+            var stars = document.querySelectorAll('#starRow .star-btn');
+            stars.forEach(function(s, i) {
+                s.textContent = i < n ? '★' : '☆';
+                s.classList.toggle('active', i < n);
+            });
+        }
+
+        async function submitFeedback() {
+            var suggestion = document.getElementById('suggestion').value.trim();
+            if (!suggestion) return alert('请填写建议内容');
+            if (rating === 0) return alert('请给个评分吧');
+
+            try {
+                var res = await fetch('/api/career/feedback', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        page: document.getElementById('pageSelect').value,
+                        rating: rating,
+                        suggestion: suggestion,
+                        contact: document.getElementById('contact').value.trim()
+                    })
+                });
+                var data = await res.json();
+                if (data.code === 200) {
+                    document.getElementById('formSection').classList.add('hidden');
+                    document.getElementById('successSection').classList.remove('hidden');
+                } else {
+                    alert(data.msg || '提交失败');
+                }
+            } catch (e) {
+                alert('网络错误，请重试');
+            }
+        }
+    </script>
+</body>
+</html>

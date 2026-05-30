@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>校园求职助手 - AI帮你拿offer</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f5f5f5;min-height:100vh;padding-bottom:30px}
+        /* ===== 顶部导航 ===== */
+        .topnav{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#667eea,#764ba2);padding:10px 16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(102,126,234,.3);flex-wrap:wrap;gap:6px}
+        .topnav-brand{font-size:15px;font-weight:700;color:#fff;white-space:nowrap}
+        .topnav-tabs{display:flex;gap:2px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+        .topnav-tab{font-size:12px;color:rgba(255,255,255,.75);text-decoration:none;padding:6px 12px;border-radius:20px;white-space:nowrap;cursor:pointer;transition:all .2s;border:none;background:none}
+        .topnav-tab.active,.topnav-tab:hover{background:rgba(255,255,255,.2);color:#fff;font-weight:600}
+        /* ===== 面板切换 ===== */
+        .panel{display:none;animation:fadeIn .25s ease}
+        .panel.active{display:block}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        /* ===== 通用 ===== */
+        .section{padding:16px}
+        .card{background:#fff;border-radius:14px;padding:18px;margin-bottom:14px}
+        .card-title{font-size:16px;font-weight:600;color:#1a1a2e;margin-bottom:14px;display:block}
+        .form-group{margin-bottom:14px}
+        .form-label{display:block;font-size:13px;font-weight:600;color:#333;margin-bottom:5px}
+        input,select,textarea{width:100%;padding:11px 12px;border-radius:8px;border:2px solid #e0e0e0;font-size:14px;color:#333;font-family:inherit;background:#fff}
+        input:focus,select:focus,textarea:focus{border-color:#667eea;outline:none}
+        textarea{min-height:70px;resize:vertical}
+        .tag-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+        .tag-btn{padding:8px 14px;border-radius:20px;font-size:13px;border:2px solid #e0e0e0;background:#fff;color:#666;cursor:pointer;transition:all .15s;white-space:nowrap}
+        .tag-btn.active{background:#667eea;color:#fff;border-color:#667eea;font-weight:600}
+        .tag-btn:active{transform:scale(.96)}
+        .btn-row{display:flex;gap:10px;margin-top:12px}
+        .btn{flex:1;padding:12px;border-radius:10px;font-size:14px;border:none;text-align:center;cursor:pointer}
+        .btn-outline{background:#fff;border:2px solid #ddd;color:#666}
+        .btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-weight:600}
+        .btn:active{opacity:.8}.btn:disabled{opacity:.5}
+        .row{display:flex;gap:10px}.row .half{flex:1}
+        .hidden{display:none!important}
+        /* ===== Toast ===== */
+        .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999;padding:12px 24px;border-radius:10px;font-size:14px;color:#fff;font-weight:500;box-shadow:0 6px 20px rgba(0,0,0,.2);animation:slideDown .3s ease;max-width:90%;text-align:center;pointer-events:none}
+        .toast.success{background:#2ecc71}.toast.error{background:#e74c3c}.toast.info{background:#667eea}
+        @keyframes slideDown{from{opacity:0;transform:translateX(-50%) translateY(-20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+        /* ===== 加载动画 ===== */
+        .loading-wrap{display:flex;flex-direction:column;align-items:center;padding:40px}
+        .dots{display:flex;gap:8px;margin-bottom:12px}
+        .dots span{width:10px;height:10px;border-radius:50%;background:#667eea;animation:bounce 1.4s infinite ease-in-out}
+        .dots span:nth-child(2){animation-delay:.16s}.dots span:nth-child(3){animation-delay:.32s}
+        @keyframes bounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+        .loading-text{font-size:14px;color:#888}
+        /* ===== 隐私 banner ===== */
+        .privacy-banner{display:flex;background:#f0f4ff;border-radius:12px;padding:14px 16px;margin-bottom:14px;border-left:4px solid #667eea}
+        .privacy-banner-icon{font-size:28px;margin-right:12px;flex-shrink:0}
+        .privacy-banner-body{flex:1}
+        .privacy-banner-title{display:block;font-size:14px;font-weight:600;color:#667eea;margin-bottom:4px}
+        .privacy-banner-text{display:block;font-size:12px;color:#666;line-height:1.7}
+        .privacy-banner-warn{display:block;font-size:12px;color:#e67e22;line-height:1.7;margin-top:2px}
+        /* ===== 简历：结果 ===== */
+        .score-wrap{text-align:center;padding:24px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:14px;margin-bottom:16px}
+        .score-circle{width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.2);border:4px solid rgba(255,255,255,.5);display:inline-flex;flex-direction:column;align-items:center;justify-content:center}
+        .score-num{font-size:36px;font-weight:700;color:#fff;line-height:1}.score-unit{font-size:14px;color:rgba(255,255,255,.8)}.score-label{display:block;color:rgba(255,255,255,.9);font-size:14px;margin-top:8px}
+        .dim-bar-wrap{margin-bottom:12px}
+        .dim-header{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+        .dim-name{color:#333}.dim-score{color:#667eea;font-weight:600}
+        .dim-bar{height:8px;background:#eee;border-radius:4px;overflow:hidden}
+        .dim-fill{height:100%;border-radius:4px;transition:width .5s ease}
+        .dim-comment{font-size:11px;color:#999;margin-top:2px}
+        .section-title{font-size:16px;font-weight:600;color:#1a1a2e;margin-bottom:10px}
+        .section-item{font-size:14px;color:#555;line-height:1.8;padding:3px 0}
+        .optimized-box{background:#f0f4ff;border-radius:10px;padding:14px;border-left:4px solid #667eea;font-size:14px;line-height:1.9;color:#333;white-space:pre-wrap;margin-bottom:12px}
+        .keyword-tag{display:inline-block;padding:6px 14px;border-radius:20px;background:#eef0ff;color:#667eea;font-size:13px;margin:4px 6px 4px 0;cursor:pointer;transition:all .15s}
+        .keyword-tag:active{background:#667eea;color:#fff}
+        .example-box{background:#fffbe6;border-radius:10px;padding:12px;margin-top:12px;font-size:12px;color:#997404;line-height:1.7}
+        /* ===== 面试：聊天 ===== */
+        .chat-banner{text-align:center;padding:8px 12px;background:#f0f4ff;font-size:12px;color:#667eea;border-radius:8px;margin-bottom:10px}
+        .progress-wrap{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:4px}
+        .progress-bar{width:100px;height:4px;background:#ddd;border-radius:2px;overflow:hidden}
+        .progress-fill{height:100%;background:#667eea;border-radius:2px;transition:width .3s}
+        .msg-list{max-height:50vh;overflow-y:auto;padding:8px 0}
+        .msg{display:flex;margin-bottom:14px}.msg.user{flex-direction:row-reverse}
+        .msg-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+        .msg.interviewer .msg-avatar{margin-right:8px}.msg.user .msg-avatar{margin-left:8px}
+        .bubble{max-width:78%;padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.7;white-space:pre-wrap}
+        .bubble.interviewer{background:#fff;color:#333;border-bottom-left-radius:4px}
+        .bubble.user{background:#667eea;color:#fff;border-bottom-right-radius:4px}
+        .input-bar{display:flex;gap:8px;align-items:center;margin-top:10px}
+        .input-bar input{flex:1;height:40px;border-radius:20px;padding:0 16px;background:#f5f5f5;border:none;font-size:14px}
+        .input-bar button{height:40px;padding:0 18px;border-radius:20px;border:none;background:#667eea;color:#fff;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap}
+        .input-bar button:disabled{opacity:.5}
+        .done-banner{text-align:center;padding:20px 0}
+        /* ===== 匹配：标签 ===== */
+        .tag-chip{display:inline-block;font-size:11px;padding:3px 10px;border-radius:12px;background:#eef6ee;color:#2ecc71;margin:2px 4px 2px 0}
+        .side-card{background:#fff9ed;border-radius:14px;padding:16px;margin-top:14px;border:2px dashed #f5a623}
+        .side-card-title{font-size:15px;font-weight:600;color:#e67e22;margin-bottom:10px}
+        .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0}
+        .toggle-label{font-size:14px;color:#333}
+        .toggle-switch{position:relative;width:46px;height:26px;flex-shrink:0}
+        .toggle-switch input{opacity:0;width:0;height:0;position:absolute}
+        .toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#ddd;border-radius:26px;transition:.3s}
+        .toggle-slider:before{position:absolute;content:"";height:20px;width:20px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+        .toggle-switch input:checked+.toggle-slider{background:#667eea}
+        .toggle-switch input:checked+.toggle-slider:before{transform:translateX(20px)}
+        /* ===== 首页Hero ===== */
+        .hero{text-align:center;padding:30px 20px 10px;background:linear-gradient(135deg,#667eea,#764ba2)}
+        .hero-title{display:block;font-size:26px;font-weight:700;color:#fff;margin-bottom:4px}
+        .hero-sub{font-size:13px;color:rgba(255,255,255,.8);margin-bottom:16px;display:block}
+        .hero-cards{display:flex;gap:10px;overflow-x:auto;padding:0 4px 16px;-webkit-overflow-scrolling:touch}
+        .hero-card{flex:0 0 auto;width:140px;background:rgba(255,255,255,.15);border-radius:12px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .2s;color:#fff}
+        .hero-card:active{background:rgba(255,255,255,.25)}
+        .hero-card-icon{font-size:30px;display:block;margin-bottom:6px}
+        .hero-card-title{font-size:13px;font-weight:600;display:block}
+        .hero-card-desc{font-size:10px;opacity:.8;display:block;margin-top:2px}
+        /* ===== 底部链接 ===== */
+        .footer-links{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;padding:16px;font-size:12px}
+        .footer-links a,.footer-links span{color:#999;text-decoration:none;cursor:pointer}
+        .footer-text{text-align:center;font-size:11px;color:#bbb;padding-bottom:16px}
+        /* ===== FAQ ===== */
+        .faq-item{margin-bottom:12px;border-bottom:1px solid #f0f0f0;padding-bottom:12px}
+        .faq-q{font-size:14px;font-weight:600;color:#333;margin-bottom:4px;cursor:pointer}
+        .faq-a{font-size:13px;color:#666;line-height:1.7;display:none}
+        .faq-a.open{display:block}
+    </style>
+</head>
+<body>
+<!-- ===== 顶部导航 ===== -->
+<div class="topnav">
+    <span class="topnav-brand">🎓 校园求职助手</span>
+    <div class="topnav-tabs">
+        <span class="topnav-tab active" data-panel="home">🏠 首页</span>
+        <span class="topnav-tab" data-panel="resume">📝 简历</span>
+        <span class="topnav-tab" data-panel="interview">💬 面试</span>
+        <span class="topnav-tab" data-panel="jobmatch">🎯 匹配</span>
+        <span class="topnav-tab" data-panel="faq">❓ FAQ</span>
+    </div>
+</div>
+
+<!-- ===== 面板0：首页 ===== -->
+<div class="panel active" id="panel-home">
+    <div class="hero">
+        <span class="hero-title">🎓 校园求职助手</span>
+        <span class="hero-sub">AI 帮你拿下 offer</span>
+        <div class="hero-cards">
+            <div class="hero-card" onclick="switchPanel('resume')">
+                <span class="hero-card-icon">📝</span>
+                <span class="hero-card-title">AI 简历优化</span>
+                <span class="hero-card-desc">5维度评分 · 关键词提取</span>
+            </div>
+            <div class="hero-card" onclick="switchPanel('interview')">
+                <span class="hero-card-icon">💬</span>
+                <span class="hero-card-title">AI 面试模拟</span>
+                <span class="hero-card-desc">5种类型 · 自定义轮数</span>
+            </div>
+            <div class="hero-card" onclick="switchPanel('jobmatch')">
+                <span class="hero-card-icon">🎯</span>
+                <span class="hero-card-title">AI 兼职匹配</span>
+                <span class="hero-card-desc">精准筛选 · 副业推荐</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section" th:replace="career/fragments/privacy-banner :: body"></div>
+
+    <!-- 案例展示 -->
+    <div class="section">
+        <div class="card">
+            <span class="section-title">📊 效果案例</span>
+            <div style="display:flex;gap:12px;overflow-x:auto">
+                <div style="flex:0 0 auto;width:200px;background:#f0f4ff;border-radius:10px;padding:12px">
+                    <span style="font-size:12px;font-weight:600;color:#667eea">📝 简历优化实例</span>
+                    <div style="font-size:11px;color:#888;margin-top:4px;line-height:1.5">某同学简历原只有 5 行，AI 分析后补全了项目描述和量化成果，评分从 <b style="color:#e74c3c">45→82</b></div>
+                </div>
+                <div style="flex:0 0 auto;width:200px;background:#f0f4ff;border-radius:10px;padding:12px">
+                    <span style="font-size:12px;font-weight:600;color:#667eea">💬 面试模拟实例</span>
+                    <div style="font-size:11px;color:#888;margin-top:4px;line-height:1.5">技术面 5 轮后 AI 指出"项目经验描述不够 STAR"，同学改进后真实面试通过</div>
+                </div>
+                <div style="flex:0 0 auto;width:200px;background:#f0f4ff;border-radius:10px;padding:12px">
+                    <span style="font-size:12px;font-weight:600;color:#667eea">🎯 兼职匹配实例</span>
+                    <div style="font-size:11px;color:#888;margin-top:4px;line-height:1.5">计科大三学生，AI 推荐了远程 Java 开发实习，匹配度 85 分，日薪 200-400</div>
+                </div>
+            </div>
+            <div style="text-align:center;margin-top:10px;font-size:11px;color:#bbb">* 案例效果因人而异，仅供参考</div>
+        </div>
+    </div>
+
+    <!-- 隐私Toast -->
+    <div class="privacy-banner hidden" id="privacyToast" style="position:fixed;bottom:20px;left:16px;right:16px;background:#1a1a2e;color:#fff;border-radius:14px;padding:16px 20px;z-index:999;box-shadow:0 8px 30px rgba(0,0,0,.3);border-left:none">
+        <div class="privacy-banner-icon" style="font-size:22px">🔒</div>
+        <div class="privacy-banner-body">
+            <span class="privacy-banner-title" style="color:#fff">隐私保护声明</span>
+            <span class="privacy-banner-text" style="color:rgba(255,255,255,.8)">简历数据仅用于AI实时分析，<b>不会存储、不会外传</b>。请勿粘贴身份证、银行卡等敏感信息。</span>
+        </div>
+        <button onclick="document.getElementById('privacyToast').classList.add('hidden');localStorage.setItem('privacy_seen2','1')" style="background:#667eea;color:#fff;border:none;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;flex-shrink:0">知道了</button>
+    </div>
+
+    <div class="footer-links">
+        <a onclick="switchPanel('faq')">❓ 使用帮助</a>
+        <span>|</span>
+        <a href="/career/feedback">💬 意见反馈</a>
+        <span>|</span>
+        <a href="/career/changelog">📋 更新日志</a>
+    </div>
+    <div class="footer-text">💡 所有功能基于AI大模型，结果仅供参考</div>
+</div>
+
+<!-- ===== 面板1：简历优化 ===== -->
+<div class="panel" id="panel-resume">
+    <div class="section" th:replace="career/fragments/privacy-banner :: body"></div>
+    <div class="section" id="resumeInputSection">
+        <div class="card">
+            <span class="form-label">🎯 求职场景</span>
+            <div class="tag-row" id="scenarioRow">
+                <span class="tag-btn active" data-val="fresh_graduate">应届生</span>
+                <span class="tag-btn" data-val="experienced">社招</span>
+                <span class="tag-btn" data-val="career_change">转行</span>
+                <span class="tag-btn" data-val="intern">实习</span>
+                <span class="tag-btn" data-val="part_time">兼职</span>
+            </div>
+            <div class="form-group"><span class="form-label">💼 目标岗位（选填）</span><input id="resume_targetPosition" placeholder="如：Java后端开发、产品经理..."></div>
+            <span class="form-label">📄 优化版本</span>
+            <div class="tag-row" id="versionRow">
+                <span class="tag-btn active" data-val="full">📝 完整版</span>
+                <span class="tag-btn" data-val="concise">📋 精简版</span>
+                <span class="tag-btn" data-val="simple">✨ 简洁版</span>
+            </div>
+            <div style="font-size:11px;color:#999;margin-bottom:10px" id="versionHint">完整重写所有模块，适合正式投递</div>
+            <span class="form-label">📝 粘贴简历内容</span>
+            <textarea id="resumeText" style="min-height:200px" placeholder="请直接粘贴文本版简历内容&#10;&#10;格式参考：&#10;姓名 / 学校专业 / 技能 / 项目经历 / 实习经历 / 获奖"></textarea>
+            <div style="text-align:right;font-size:12px;color:#999;margin-top:4px"><span id="resumeCharCount">0</span> 字</div>
+            <div class="btn-row">
+                <button class="btn btn-outline" onclick="pasteResumeText()">📋 粘贴</button>
+                <button class="btn btn-outline" onclick="document.getElementById('resumeText').value='';document.getElementById('resumeCharCount').textContent='0';hideEl('resumeResultSection')">清空</button>
+            </div>
+            <button class="btn btn-primary" style="width:100%;margin-top:12px;padding:14px;font-size:16px" onclick="analyzeResume()">🔍 AI 分析简历</button>
+        </div>
+    </div>
+    <div class="section hidden" id="resumeLoading"><div class="loading-wrap"><div class="dots"><span></span><span></span><span></span></div><span class="loading-text">AI 正在分析简历... 预计30-60秒</span></div></div>
+    <div class="section hidden" id="resumeResultSection"></div>
+</div>
+
+<!-- ===== 面板2：面试模拟 ===== -->
+<div class="panel" id="panel-interview">
+    <div class="section" th:replace="career/fragments/privacy-banner :: body"></div>
+    <div class="section" id="interviewSetup">
+        <div class="card">
+            <span class="card-title">🤖 AI 模拟面试官</span>
+            <div class="form-group"><span class="form-label">面试类型</span><select id="interviewType"><option value="campus_single">校招单面</option><option value="campus_group">校招群面（无领导小组）</option><option value="tech">社招技术面</option><option value="hr">HR 面</option><option value="part_time">兼职面试</option></select></div>
+            <div class="form-group"><span class="form-label">目标岗位</span><select id="interview_jobType"><option>后端开发</option><option>前端开发</option><option>产品经理</option><option>数据分析</option><option>市场营销</option><option>运营</option><option>金融</option><option>通用岗位</option></select></div>
+            <div class="form-group"><span class="form-label">难度</span><div class="tag-row" id="diffRow"><span class="tag-btn active" data-val="初级">初级</span><span class="tag-btn" data-val="中级">中级</span><span class="tag-btn" data-val="高级">高级</span></div></div>
+            <div class="form-group"><span class="form-label">轮数</span><div class="tag-row" id="roundRow"><span class="tag-btn" data-val="3">3轮·快速</span><span class="tag-btn active" data-val="5">5轮·标准</span><span class="tag-btn" data-val="8">8轮·深度</span></div></div>
+            <div class="form-group"><span class="form-label">模式</span><div class="tag-row" id="modeRow"><span class="tag-btn active" data-val="free">自由提问</span><span class="tag-btn" data-val="bank">常见题库</span></div></div>
+            <div style="background:#fffbe6;border-radius:8px;padding:10px 14px;font-size:12px;color:#997404;margin-bottom:14px">💡 <b>语音作答提示：</b>可以用手机输入法的语音转文字功能对着说答案，模拟真实面试的口头表达场景，效果更好。</div>
+            <button class="btn btn-primary" style="width:100%;padding:14px;font-size:16px" onclick="startInterview()">🚀 开始面试</button>
+        </div>
+    </div>
+    <div class="section hidden" id="interviewChat">
+        <div class="chat-banner">
+            <span id="chatBannerText">面试中</span>
+            <div class="progress-wrap">
+                <span style="font-size:11px;color:#999">第</span><span style="font-size:13px;font-weight:600;color:#667eea" id="progressNum">1</span><span style="font-size:11px;color:#999">/</span><span style="font-size:11px;color:#999" id="progressTotal">5</span><span style="font-size:11px;color:#999">轮</span>
+                <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+            </div>
+        </div>
+        <div class="msg-list" id="msgList"></div>
+        <div class="input-bar" id="inputBar">
+            <input id="answerInput" placeholder="输入你的回答..." onkeydown="if(event.key==='Enter')sendAnswer()">
+            <button onclick="sendAnswer()">回答</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== 面板3：兼职匹配 ===== -->
+<div class="panel" id="panel-jobmatch">
+    <div class="section" th:replace="career/fragments/privacy-banner :: body"></div>
+    <div class="section" id="jobmatchForm">
+        <div class="card">
+            <span class="card-title">📋 填写信息，AI 帮你找方向</span>
+            <div class="form-group"><span class="form-label">专业</span><input id="match_major" placeholder="如：计算机科学、市场营销..."></div>
+            <div class="form-group"><span class="form-label">已掌握技能</span><textarea id="match_skills" placeholder="如：Java、Python、数据分析、写作..."></textarea></div>
+            <div class="form-group"><span class="form-label">兴趣方向</span><input id="match_interests" placeholder="如：互联网、教育、金融..."></div>
+            <div class="row"><div class="form-group half"><span class="form-label">城市</span><input id="match_city" placeholder="如：杭州"></div><div class="form-group half"><span class="form-label">期望薪资</span><input id="match_salary" placeholder="如：2000-5000"></div></div>
+            <div class="row"><div class="form-group half"><span class="form-label">工作类型</span><select id="match_workType"><option value="">不限</option><option value="兼职">兼职</option><option value="实习">实习</option><option value="校招">校招</option><option value="全职">全职</option></select></div><div class="form-group half"><span class="form-label">工作时长</span><select id="match_workDuration"><option value="">灵活</option><option value="短期">短期</option><option value="长期">长期</option><option value="周末">周末</option></select></div></div>
+            <div class="toggle-row"><span class="toggle-label">🚀 同时推荐副业方向</span><label class="toggle-switch"><input type="checkbox" id="match_sideHustle"><span class="toggle-slider"></span></label></div>
+            <button class="btn btn-primary" style="width:100%;padding:14px;font-size:16px;margin-top:8px" onclick="matchJobs()">🎯 开始匹配</button>
+        </div>
+    </div>
+    <div class="section hidden" id="jobmatchLoading"><div class="loading-wrap"><div class="dots"><span></span><span></span><span></span></div><span class="loading-text">AI 正在分析... 预计30-60秒</span></div></div>
+    <div class="section hidden" id="jobmatchResult"></div>
+</div>
+
+<!-- ===== 面板4：FAQ ===== -->
+<div class="panel" id="panel-faq">
+    <div class="section">
+        <div class="card">
+            <span class="card-title">❓ 使用帮助 / FAQ</span>
+            <div class="faq-item"><div class="faq-q" onclick="this.nextElementSibling.classList.toggle('open')">Q: 这个工具收费吗？</div><div class="faq-a">完全免费。所有功能基于DeepSeek大模型API，目前由开发者承担API费用，大家可以放心使用。</div></div>
+            <div class="faq-item"><div class="faq-q" onclick="this.nextElementSibling.classList.toggle('open')">Q: 我的简历数据安全吗？</div><div class="faq-a">安全。简历内容仅用于当前会话的AI分析，<b>不会存储在服务器、不会外传、不会用于AI训练</b>。建议粘贴前隐去身份证、银行卡等敏感信息。</div></div>
+            <div class="faq-item"><div class="faq-q" onclick="this.nextElementSibling.classList.toggle('open')">Q: 简历应该怎么粘贴？</div><div class="faq-a">直接复制你简历的文本内容粘贴即可。包括：个人信息（姓名/学校/专业）、技能、项目经历、实习经历、获奖情况。不需要上传文件。</div></div>
+            <div class="faq-item"><div class="faq-q" onclick="this.nextElementSibling.classList.toggle('open')">Q: 面试模拟真实吗？</div><div class="faq-a">AI会根据你选择的面试类型（校招/社招/HR面等）模拟不同风格的面试官。问题从基础到深入递进，回答后会给反馈。建议认真作答，效果更接近真实面试。</div></div>
+            <div class="faq-item"><div class="faq-q" onclick="this.nextElementSibling.classList.toggle('open')">Q: AI分析结果准确吗？</div><div class="faq-a">AI给出的分析基于通用简历标准和面试经验，可供参考但不保证100%准确。最终求职结果还取决于你的实际能力和面试表现。</div></div>
+            <div class="faq-item"><div class="faq-q" onclick="this.nextElementSibling.classList.toggle('open')">Q: 链接打不开怎么办？</div><div class="faq-a">当前链接是临时隧道地址，可能偶尔不稳定。如遇打不开，可稍等几分钟刷新重试。如有其他问题，欢迎通过「意见反馈」告诉我们。</div></div>
+            <div class="faq-item"><div class="faq-q" onclick="this.nextElementSibling.classList.toggle('open')">Q: 有APP或小程序吗？</div><div class="faq-a">微信小程序正在开发中。目前请通过网页版访问，手机浏览器打开也能正常使用。</div></div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+// ==================== 全局：面板切换 ====================
+function switchPanel(name) {
+    document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+    document.querySelectorAll('.topnav-tab').forEach(function(t){ t.classList.remove('active'); });
+    var panel = document.getElementById('panel-' + name);
+    if (panel) panel.classList.add('active');
+    var tab = document.querySelector('.topnav-tab[data-panel="'+name+'"]');
+    if (tab) tab.classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.topnav-tab').forEach(function(tab){
+    tab.addEventListener('click', function(){ switchPanel(this.dataset.panel); });
+});
+
+// ==================== 全局：Toast ====================
+function toast(msg, type) {
+    type = type || 'info';
+    var el = document.createElement('div');
+    el.className = 'toast ' + type;
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(function(){ el.remove(); }, 2500);
+}
+
+// ==================== 全局：显示/隐藏 ====================
+function showEl(id){ document.getElementById(id).classList.remove('hidden'); }
+function hideEl(id){ document.getElementById(id).classList.add('hidden'); }
+
+// ==================== Tag按钮通用 ====================
+function initTagRow(rowId, onSelect) {
+    document.querySelectorAll('#'+rowId+' .tag-btn').forEach(function(btn){
+        btn.addEventListener('click', function(){
+            document.querySelectorAll('#'+rowId+' .tag-btn').forEach(function(b){ b.classList.remove('active'); });
+            btn.classList.add('active');
+            if (onSelect) onSelect(btn.dataset.val);
+        });
+    });
+}
+// 初始化所有 tag rows
+initTagRow('scenarioRow');
+initTagRow('versionRow', function(v){
+    var hints = {full:'完整重写所有模块，适合正式投递',concise:'200字以内提炼核心卖点，适合网申',simple:'仅优化措辞不改结构，适合快速修改'};
+    document.getElementById('versionHint').textContent = hints[v]||'';
+});
+initTagRow('diffRow');
+initTagRow('roundRow');
+initTagRow('modeRow');
+
+// ==================== 简历模块 ====================
+var resumeTextArea = document.getElementById('resumeText');
+resumeTextArea.addEventListener('input', function(){ document.getElementById('resumeCharCount').textContent = this.value.length; });
+
+function pasteResumeText() {
+    navigator.clipboard.readText().then(function(t){ resumeTextArea.value += t; document.getElementById('resumeCharCount').textContent = resumeTextArea.value.length; }).catch(function(){ toast('请先复制简历内容','error'); });
+}
+
+async function analyzeResume() {
+    var text = resumeTextArea.value.trim();
+    if (!text) return toast('请粘贴简历内容','error');
+    if (text.length < 20) return toast('简历内容太短','error');
+    hideEl('resumeInputSection'); hideEl('resumeResultSection'); showEl('resumeLoading');
+    try {
+        var scenario = document.querySelector('#scenarioRow .tag-btn.active').dataset.val;
+        var versionType = document.querySelector('#versionRow .tag-btn.active').dataset.val;
+        var targetPosition = document.getElementById('resume_targetPosition').value.trim();
+        var res = await fetch('/api/career/resume/analyze', {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({resume:text, scenario:scenario, versionType:versionType, targetPosition:targetPosition})
+        });
+        var data = await res.json();
+        hideEl('resumeLoading');
+        if (data.code === 200) { showResumeResult(data.data); showEl('resumeResultSection'); document.getElementById('resumeResultSection').scrollIntoView({behavior:'smooth'}); }
+        else { toast(data.msg||'分析失败','error'); showEl('resumeInputSection'); }
+    } catch(e) { hideEl('resumeLoading'); toast('网络错误','error'); showEl('resumeInputSection'); }
+}
+
+function showResumeResult(d) {
+    var html = '<div class="score-wrap"><div class="score-circle"><span class="score-num">'+(d.score||'--')+'</span><span class="score-unit">分</span></div><span class="score-label">综合评分</span></div>';
+    if (d.dimensions) {
+        html += '<div class="card"><div class="section-title">📊 分维度评分</div>';
+        var keys=['wording','matching','structure','highlights','grammar'], colors=['#667eea','#f5a623','#2ecc71','#e74c3c','#3498db'];
+        keys.forEach(function(k,i){
+            var dim = d.dimensions[k]; if (!dim) return;
+            html += '<div class="dim-bar-wrap"><div class="dim-header"><span class="dim-name">'+dim.label+'</span><span class="dim-score">'+dim.score+'分</span></div><div class="dim-bar"><div class="dim-fill" style="width:'+dim.score+'%;background:'+colors[i]+'"></div></div><div class="dim-comment">'+dim.comment+'</div></div>';
+        });
+        html += '</div>';
+    }
+    if (d.keywords && d.keywords.length) {
+        html += '<div class="card"><div class="section-title">🏷️ 提取关键词</div>';
+        d.keywords.forEach(function(k){ html += '<span class="keyword-tag" onclick="navigator.clipboard.writeText(\''+k.replace(/'/g,"\\'")+'\').then(function(){toast(\'已复制: '+k+'\',\'success\')})">'+k+'</span>'; });
+        html += '<div style="margin-top:8px"><button class="btn btn-outline" style="font-size:12px;padding:6px 12px" onclick="navigator.clipboard.writeText(\''+(d.keywords.join('、')).replace(/'/g,"\\'")+'\').then(function(){toast(\'已复制全部关键词\',\'success\')})">📋 一键复制全部关键词</button></div></div>';
+    }
+    if (d.strengths && d.strengths.length) { html += '<div class="card"><div class="section-title">✅ 优点</div>'; d.strengths.forEach(function(s){ html += '<div class="section-item">• '+s+'</div>'; }); html += '</div>'; }
+    if (d.weaknesses && d.weaknesses.length) { html += '<div class="card"><div class="section-title">⚠️ 不足</div>'; d.weaknesses.forEach(function(w){ html += '<div class="section-item">• '+w+'</div>'; }); html += '</div>'; }
+    if (d.suggestions && d.suggestions.length) { html += '<div class="card"><div class="section-title">💡 修改建议</div>'; d.suggestions.forEach(function(s){ html += '<div class="section-item">• '+s+'</div>'; }); html += '</div>'; }
+    if (d.optimizedVersion) {
+        // 关键词高亮
+        var highlighted = d.optimizedVersion.replace(/\n/g,'<br>');
+        if (d.keywords && d.keywords.length) {
+            d.keywords.forEach(function(kw){
+                highlighted = highlighted.replace(new RegExp('('+kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','g'), '<mark style="background:#fff3b0;padding:1px 3px;border-radius:2px">$1</mark>');
+            });
+        }
+        html += '<div class="card"><div class="section-title">✨ 优化后的简历（关键词已高亮）</div><div class="optimized-box">'+highlighted+'</div><button class="btn btn-primary" style="width:100%" onclick="navigator.clipboard.writeText(\''+(d.optimizedVersion||'').replace(/'/g,"\\'").replace(/\n/g,'\\n')+'\').then(function(){toast(\'已复制\',\'success\')})">📋 复制优化版简历</button></div>';
+        // 前后对比
+        html += '<div class="card"><div class="section-title">📊 优化前后对比</div>';
+        html += '<div style="display:flex;gap:12px;overflow-x:auto"><div style="flex:1;min-width:140px"><span style="font-size:12px;color:#999;font-weight:600">📄 原始版本</span><div style="font-size:12px;color:#888;line-height:1.6;margin-top:6px;max-height:200px;overflow-y:auto;white-space:pre-wrap;background:#fafafa;padding:8px;border-radius:6px">'+(resumeTextArea.value.substring(0,300)+(resumeTextArea.value.length>300?'...':''))+'</div></div>';
+        html += '<div style="flex:1;min-width:140px"><span style="font-size:12px;color:#667eea;font-weight:600">✨ 优化版本</span><div style="font-size:12px;color:#333;line-height:1.6;margin-top:6px;max-height:200px;overflow-y:auto;white-space:pre-wrap;background:#f0f4ff;padding:8px;border-radius:6px">'+d.optimizedVersion.substring(0,300)+(d.optimizedVersion.length>300?'...':'')+'</div></div></div>';
+        html += '</div>';
+    }
+    html += '<button class="btn btn-outline" style="width:100%;margin-top:8px;padding:14px" onclick="hideEl(\'resumeResultSection\');showEl(\'resumeInputSection\');window.scrollTo({top:0,behavior:\'smooth\'})">🔄 重新分析</button>';
+    document.getElementById('resumeResultSection').innerHTML = html;
+}
+
+// ==================== 面试模块 ====================
+var ivSessionId='', ivDone=false, ivJobType='', ivDifficulty='', ivInterviewType='', ivRoundCount=5, ivMode='free';
+
+async function startInterview() {
+    ivJobType = document.getElementById('interview_jobType').value;
+    ivDifficulty = document.querySelector('#diffRow .tag-btn.active').dataset.val;
+    ivInterviewType = document.getElementById('interviewType').value;
+    ivRoundCount = parseInt(document.querySelector('#roundRow .tag-btn.active').dataset.val);
+    ivMode = document.querySelector('#modeRow .tag-btn.active').dataset.val;
+    var typeNames = {campus_single:'校招单面',campus_group:'校招群面',tech:'社招技术面',hr:'HR面',part_time:'兼职面试'};
+    document.getElementById('chatBannerText').textContent = '🎯 '+typeNames[ivInterviewType]+' · '+ivJobType+' · '+ivDifficulty;
+    document.getElementById('progressTotal').textContent = ivRoundCount;
+    document.getElementById('progressNum').textContent='1'; document.getElementById('progressFill').style.width='0%';
+    hideEl('interviewSetup'); showEl('interviewChat');
+    showEl('inputBar'); ivDone=false;
+    document.getElementById('msgList').innerHTML=''; document.getElementById('answerInput').value='';
+    addMsg('interviewer','🤖 面试官正在准备题目...');
+    try {
+        var res = await fetch('/api/career/interview/start', {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({jobType:ivJobType,difficulty:ivDifficulty,interviewType:ivInterviewType,roundCount:ivRoundCount,mode:ivMode})
+        });
+        var data = await res.json();
+        document.getElementById('msgList').lastChild.remove();
+        if (data.code===200) { ivSessionId=data.data.sessionId; addMsg('interviewer',data.data.question); updateProgress(1); saveInterviewHistory(); }
+        else { addMsg('interviewer','❌ '+(data.msg||'失败')); }
+    } catch(e) { document.getElementById('msgList').lastChild.remove(); addMsg('interviewer','❌ 网络错误'); }
+}
+
+async function sendAnswer() {
+    if (ivDone) return;
+    var answer = document.getElementById('answerInput').value.trim();
+    if (!answer) return;
+    addMsg('user',answer); document.getElementById('answerInput').value='';
+    saveInterviewHistory();
+    var loadEl = addLoading();
+    try {
+        var res = await fetch('/api/career/interview/answer', {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({sessionId:ivSessionId,answer:answer})
+        });
+        var data = await res.json();
+        loadEl.remove();
+        if (data.code===200) {
+            if (data.data.isComplete) { ivDone=true; addMsg('interviewer',data.data.overallEvaluation); updateProgress(data.data.questionNumber); showInterviewDone(); }
+            else { addMsg('interviewer',data.data.feedback); updateProgress(data.data.questionNumber); }
+            saveInterviewHistory();
+        } else { addMsg('interviewer','❌ '+(data.msg||'失败')); }
+    } catch(e) { loadEl.remove(); addMsg('interviewer','❌ 网络错误'); }
+}
+
+function updateProgress(n) { document.getElementById('progressNum').textContent=n; document.getElementById('progressFill').style.width=(n/ivRoundCount*100)+'%'; }
+function addMsg(role,text) {
+    var el=document.createElement('div'); el.className='msg '+role;
+    el.innerHTML='<div class="msg-avatar">'+(role==='interviewer'?'🤖':'👤')+'</div><div class="bubble '+role+'">'+text.replace(/\n/g,'<br>')+'</div>';
+    document.getElementById('msgList').appendChild(el); el.scrollIntoView({behavior:'smooth'});
+}
+function addLoading() {
+    var el=document.createElement('div'); el.className='msg interviewer';
+    el.innerHTML='<div class="msg-avatar">🤖</div><div class="bubble interviewer"><div class="dots"><span></span><span></span><span></span></div></div>';
+    document.getElementById('msgList').appendChild(el); el.scrollIntoView({behavior:'smooth'}); return el;
+}
+function showInterviewDone() {
+    hideEl('inputBar');
+    var el=document.createElement('div'); el.className='done-banner';
+    el.innerHTML='<div style="font-size:48px">🎉</div><div style="font-size:16px;font-weight:600;color:#1a1a2e;margin:8px 0">面试已完成！</div><button class="btn btn-primary" style="margin-top:8px" onclick="resetInterview()">🔄 再来一次</button>';
+    document.getElementById('msgList').appendChild(el); el.scrollIntoView({behavior:'smooth'});
+}
+function resetInterview() {
+    ivSessionId=''; ivDone=false; document.getElementById('msgList').innerHTML='';
+    hideEl('interviewChat'); showEl('interviewSetup'); window.scrollTo({top:0,behavior:'smooth'});
+    localStorage.removeItem('interview_history_'+ivSessionId);
+}
+function saveInterviewHistory() {
+    try {
+        var msgs = []; document.querySelectorAll('#msgList .msg').forEach(function(m){
+            msgs.push({role:m.classList.contains('user')?'user':'interviewer', content:m.querySelector('.bubble').textContent});
+        });
+        localStorage.setItem('interview_current', JSON.stringify({messages:msgs, jobType:ivJobType, difficulty:ivDifficulty, interviewType:ivInterviewType, roundCount:ivRoundCount, mode:ivMode, sessionId:ivSessionId, done:ivDone, currentQ:document.getElementById('progressNum').textContent}));
+    } catch(e){}
+}
+
+// ==================== 兼职匹配模块 ====================
+var matchFormData = {};
+async function matchJobs() {
+    var major=document.getElementById('match_major').value.trim(), skills=document.getElementById('match_skills').value.trim();
+    if (!major && !skills) return toast('请至少填写专业或技能','error');
+    matchFormData = {major:major,skills:skills,interests:document.getElementById('match_interests').value.trim(),city:document.getElementById('match_city').value.trim(),expectedSalary:document.getElementById('match_salary').value.trim(),workType:document.getElementById('match_workType').value,workDuration:document.getElementById('match_workDuration').value,includeSideHustle:document.getElementById('match_sideHustle').checked};
+    hideEl('jobmatchForm'); hideEl('jobmatchResult'); showEl('jobmatchLoading');
+    try {
+        var res = await fetch('/api/career/job-match', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(matchFormData)});
+        var data = await res.json();
+        hideEl('jobmatchLoading');
+        if (data.code===200 && data.data.recommendations) { showJobResult(data.data); showEl('jobmatchResult'); document.getElementById('jobmatchResult').scrollIntoView({behavior:'smooth'}); }
+        else { toast(data.msg||'匹配失败','error'); showEl('jobmatchForm'); }
+    } catch(e) { hideEl('jobmatchLoading'); toast('网络错误','error'); showEl('jobmatchForm'); }
+}
+function showJobResult(data) {
+    var html = '<span style="font-size:17px;font-weight:700;color:#1a1a2e;display:block;text-align:center;margin-bottom:14px">🎯 为你推荐 '+data.recommendations.length+' 个方向</span>';
+    data.recommendations.forEach(function(j){
+        html += '<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px;margin-bottom:6px"><span style="font-size:17px;font-weight:600;color:#1a1a2e">'+j.title+'</span><span style="font-size:11px;padding:3px 10px;border-radius:12px;background:#f0f4ff;color:#667eea">'+j.type+'</span></div>';
+        if (j.tags && j.tags.length) { html += '<div style="margin-bottom:8px">'; j.tags.forEach(function(t){ html += '<span class="tag-chip">'+t+'</span>'; }); html += '</div>'; }
+        html += '<div style="display:flex;gap:14px;margin-bottom:10px;font-size:13px;color:#666"><span>💰 '+j.salaryRange+'</span><span style="color:#f5a623;font-weight:600">⭐ '+(j.matchScore||'--')+'分</span></div>';
+        html += '<div style="margin-top:8px;padding-top:8px;border-top:1px solid #f0f0f0"><span style="font-size:12px;font-weight:600;color:#999">推荐理由</span><div style="font-size:13px;color:#555;line-height:1.7">'+j.reason+'</div></div>';
+        if (j.skillsNeeded) html += '<div style="margin-top:8px;padding-top:8px;border-top:1px solid #f0f0f0"><span style="font-size:12px;font-weight:600;color:#999">需要补充的技能</span><div style="font-size:13px;color:#555;line-height:1.7">'+j.skillsNeeded+'</div></div>';
+        if (j.howToFind) html += '<div style="margin-top:8px;padding-top:8px;border-top:1px solid #f0f0f0"><span style="font-size:12px;font-weight:600;color:#999">怎么找到</span><div style="font-size:13px;color:#555;line-height:1.7">'+j.howToFind+'</div></div>';
+        html += '</div>';
+    });
+    if (data.sideHustles && data.sideHustles.length) {
+        html += '<div class="side-card"><div class="side-card-title">🚀 副业/自由职业推荐</div>';
+        data.sideHustles.forEach(function(s){ html += '<div style="margin-bottom:8px"><span style="font-weight:600;font-size:14px">'+s.title+'</span><span style="font-size:12px;color:#888;display:block">'+s.description+'</span></div>'; });
+        html += '</div>';
+    }
+    html += '<button class="btn btn-outline" style="width:100%;margin-top:14px;padding:14px" onclick="backToMatchForm()">🔄 修改信息重新匹配</button>';
+    document.getElementById('jobmatchResult').innerHTML = html;
+}
+function backToMatchForm() {
+    var m=matchFormData;
+    if (m.major!==undefined) document.getElementById('match_major').value=m.major;
+    if (m.skills!==undefined) document.getElementById('match_skills').value=m.skills;
+    if (m.interests!==undefined) document.getElementById('match_interests').value=m.interests;
+    if (m.city!==undefined) document.getElementById('match_city').value=m.city;
+    if (m.expectedSalary!==undefined) document.getElementById('match_salary').value=m.expectedSalary;
+    if (m.workType!==undefined) document.getElementById('match_workType').value=m.workType;
+    if (m.workDuration!==undefined) document.getElementById('match_workDuration').value=m.workDuration;
+    if (m.includeSideHustle!==undefined) document.getElementById('match_sideHustle').checked=m.includeSideHustle;
+    hideEl('jobmatchResult'); showEl('jobmatchForm'); window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ==================== 初始化 ====================
+(function(){
+    // 首次访问隐私提示
+    if (!localStorage.getItem('privacy_seen2')) {
+        setTimeout(function(){ document.getElementById('privacyToast').classList.remove('hidden'); }, 2000);
+    }
+    // 尝试恢复未完成的面试
+    try {
+        var saved = JSON.parse(localStorage.getItem('interview_current'));
+        if (saved && saved.messages && saved.messages.length>0 && !saved.done) {
+            var shouldRestore = confirm('检测到未完成的面试，是否继续？');
+            if (shouldRestore) {
+                ivJobType=saved.jobType; ivDifficulty=saved.difficulty; ivInterviewType=saved.interviewType;
+                ivRoundCount=saved.roundCount; ivMode=saved.mode; ivSessionId=saved.sessionId; ivDone=saved.done;
+                switchPanel('interview');
+                hideEl('interviewSetup'); showEl('interviewChat'); showEl('inputBar');
+                document.getElementById('progressTotal').textContent=ivRoundCount;
+                document.getElementById('progressNum').textContent=saved.currentQ||'1';
+                var typeNames={campus_single:'校招单面',campus_group:'校招群面',tech:'社招技术面',hr:'HR面',part_time:'兼职面试'};
+                document.getElementById('chatBannerText').textContent='🎯 '+typeNames[ivInterviewType]+' · '+ivJobType+' · '+ivDifficulty;
+                document.getElementById('msgList').innerHTML='';
+                saved.messages.forEach(function(m){ addMsg(m.role,m.content); });
+                if (ivDone) { hideEl('inputBar'); showInterviewDone(); }
+            }
+        }
+    } catch(e){}
+})();
+</script>
+</body>
+</html>

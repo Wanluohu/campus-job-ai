@@ -1,0 +1,102 @@
+<view class="container">
+  <!-- 顶部导航 -->
+  <view class="nav-bar">
+    <view class="nav-back" bindtap="goBack">
+      <text>← 返回</text>
+    </view>
+    <text class="nav-title">AI 简历优化</text>
+    <view class="nav-placeholder"></view>
+  </view>
+
+  <!-- 输入区域（未显示结果时） -->
+  <view class="input-section" wx:if="{{!showResult}}">
+    <view class="section-label">
+      <text>📝 请粘贴你的简历内容</text>
+    </view>
+
+    <textarea
+      class="resume-textarea"
+      value="{{resumeText}}"
+      placeholder="在此粘贴你的简历全文...\n\n例如：\n张三\n某大学 计算机科学专业 大三\n技能：Java、Spring、MySQL..."
+      placeholder-class="textarea-placeholder"
+      bindinput="onInput"
+      maxlength="5000"
+      auto-height
+    />
+
+    <view class="input-actions">
+      <button class="btn-paste" bindtap="pasteResume">📋 粘贴</button>
+      <button class="btn-clear" bindtap="clearResume">清空</button>
+    </view>
+
+    <view class="word-count">
+      <text>已输入 {{resumeText.length}} 字</text>
+    </view>
+
+    <button class="btn-analyze {{loading ? 'btn-disabled' : ''}}" bindtap="analyzeResume" disabled="{{loading}}">
+      {{loading ? 'AI 分析中...' : '🔍 AI 分析简历'}}
+    </button>
+  </view>
+
+  <!-- 加载动画 -->
+  <view class="loading-section" wx:if="{{loading}}">
+    <view class="typing-dots">
+      <view class="dot"></view>
+      <view class="dot"></view>
+      <view class="dot"></view>
+    </view>
+    <text class="loading-text">AI 正在分析你的简历，请稍候...</text>
+  </view>
+
+  <!-- 结果展示区域 -->
+  <view class="result-section" wx:if="{{showResult && result}}">
+
+    <!-- 评分卡片 -->
+    <view class="score-card">
+      <view class="score-circle">
+        <text class="score-number">{{result.score || '--'}}</text>
+        <text class="score-unit">分</text>
+      </view>
+      <text class="score-label">综合评分</text>
+    </view>
+
+    <!-- 优点 -->
+    <view class="result-block strengths" wx:if="{{result.strengths && result.strengths.length > 0}}">
+      <view class="block-title">✅ 优点</view>
+      <view class="block-item" wx:for="{{result.strengths}}" wx:key="*this">
+        <text>• {{item}}</text>
+      </view>
+    </view>
+
+    <!-- 不足 -->
+    <view class="result-block weaknesses" wx:if="{{result.weaknesses && result.weaknesses.length > 0}}">
+      <view class="block-title">⚠️ 不足</view>
+      <view class="block-item" wx:for="{{result.weaknesses}}" wx:key="*this">
+        <text>• {{item}}</text>
+      </view>
+    </view>
+
+    <!-- 修改建议 -->
+    <view class="result-block suggestions" wx:if="{{result.suggestions && result.suggestions.length > 0}}">
+      <view class="block-title">💡 修改建议</view>
+      <view class="block-item" wx:for="{{result.suggestions}}" wx:key="*this" wx:for-index="idx">
+        <text>• {{item}}</text>
+      </view>
+    </view>
+
+    <!-- 优化版本 -->
+    <view class="result-block optimized" wx:if="{{result.optimizedVersion}}">
+      <view class="block-title">✨ 优化后的简历</view>
+      <view class="optimized-content">
+        <text class="optimized-text" selectable>{{result.optimizedVersion}}</text>
+      </view>
+      <button class="btn-copy" bindtap="copyOptimized">📋 复制优化版简历</button>
+    </view>
+
+    <!-- 重新分析 -->
+    <button class="btn-reanalyze" bindtap="clearResume">🔄 重新分析</button>
+  </view>
+
+  <!-- 底部占位 -->
+  <view style="height: 40rpx;"></view>
+</view>

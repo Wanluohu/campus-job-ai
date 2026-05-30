@@ -1,0 +1,31 @@
+<view class="container">
+  <view class="header">
+    <text class="back-btn" bindtap="goBack">← 返回</text>
+    <text class="header-title">对话历史</text>
+    <text class="header-placeholder"></text>
+  </view>
+
+  <scroll-view class="list" scroll-y wx:if="{{conversations.length > 0}}">
+    <view
+      wx:for="{{conversations}}"
+      wx:key="id"
+      class="conv-item"
+      bindtap="openConversation"
+      data-id="{{item.id}}"
+    >
+      <view class="conv-info">
+        <text class="conv-title">{{item.title}}</text>
+        <text class="conv-meta">{{item.messageCount}} 条消息 · {{item.time}}</text>
+      </view>
+      <view class="conv-delete" catchtap="deleteConversation" data-id="{{item.id}}">
+        <text class="delete-icon">✕</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="empty" wx:else>
+    <text class="empty-icon">💬</text>
+    <text class="empty-text">暂无对话历史</text>
+    <text class="empty-sub">开始和 Claude 聊天吧</text>
+  </view>
+</view>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI 兼职匹配 - 校园求职助手</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f5f5f5;min-height:100vh;padding-bottom:40px}
+        .section{padding:16px}
+        .card{background:#fff;border-radius:14px;padding:18px;margin-bottom:14px}
+        .card-title{font-size:16px;font-weight:600;color:#1a1a2e;margin-bottom:15px;display:block}
+        .form-group{margin-bottom:14px}
+        .form-label{display:block;font-size:13px;font-weight:600;color:#333;margin-bottom:5px}
+        input,select,textarea{width:100%;padding:11px 12px;border-radius:8px;border:2px solid #e0e0e0;font-size:14px;color:#333;font-family:inherit;background:#fff}
+        input:focus,select:focus,textarea:focus{border-color:#667eea;outline:none}
+        textarea{min-height:70px;resize:vertical}
+        .row{display:flex;gap:10px}
+        .row .half{flex:1}
+        .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0}
+        .toggle-label{font-size:14px;color:#333;font-weight:500}
+        .toggle-switch{position:relative;width:48px;height:26px;flex-shrink:0}
+        .toggle-switch input{opacity:0;width:0;height:0}
+        .toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#ddd;border-radius:26px;transition:.3s}
+        .toggle-slider:before{position:absolute;content:"";height:20px;width:20px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+        .toggle-switch input:checked+.toggle-slider{background:#667eea}
+        .toggle-switch input:checked+.toggle-slider:before{transform:translateX(22px)}
+        .btn{display:block;width:100%;padding:14px;border-radius:12px;font-size:16px;font-weight:600;border:none;color:#fff;background:linear-gradient(135deg,#667eea,#764ba2);cursor:pointer;margin-top:6px}
+        .btn:active{opacity:.8}.btn:disabled{opacity:.5}
+        .loading{display:flex;flex-direction:column;align-items:center;padding:40px}
+        .dots{display:flex;gap:8px;margin-bottom:12px}
+        .dots span{width:10px;height:10px;border-radius:50%;background:#667eea;animation:bounce 1.4s infinite ease-in-out}
+        .dots span:nth-child(2){animation-delay:.16s}.dots span:nth-child(3){animation-delay:.32s}
+        @keyframes bounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+        .loading-text{font-size:14px;color:#888}
+        .result-header{font-size:17px;font-weight:700;color:#1a1a2e;text-align:center;margin-bottom:14px;display:block}
+        .job-card{background:#fff;border-radius:14px;padding:18px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+        .job-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:6px}
+        .job-title{font-size:17px;font-weight:600;color:#1a1a2e}
+        .job-type{font-size:11px;padding:3px 10px;border-radius:12px;background:#f0f4ff;color:#667eea;white-space:nowrap}
+        .job-meta{display:flex;gap:14px;margin-bottom:8px;font-size:13px;color:#666;flex-wrap:wrap}
+        .match{color:#f5a623;font-weight:600}
+        .tag-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+        .tag-chip{font-size:11px;padding:3px 10px;border-radius:12px;background:#eef6ee;color:#2ecc71;white-space:nowrap}
+        .job-section{margin-top:10px;padding-top:10px;border-top:1px solid #f0f0f0}
+        .job-section-title{font-size:12px;font-weight:600;color:#999;display:block;margin-bottom:4px}
+        .job-section-text{font-size:13px;color:#555;line-height:1.7}
+        .side-card{background:#fff9ed;border-radius:14px;padding:18px;margin-top:16px;border:2px dashed #f5a623}
+        .side-card-title{font-size:15px;font-weight:600;color:#e67e22;margin-bottom:12px}
+        .hidden{display:none}
+    </style>
+</head>
+<body>
+    <div th:replace="career/fragments/topnav :: body"></div>
+
+    <!-- 输入表单 -->
+    <div class="section" id="formSection">
+        <div th:replace="career/fragments/privacy-banner :: body"></div>
+
+        <div class="card">
+            <span class="card-title">📋 填写信息，AI 帮你找方向</span>
+            <div class="form-group">
+                <span class="form-label">专业</span>
+                <input id="major" placeholder="如：计算机科学、市场营销...">
+            </div>
+            <div class="form-group">
+                <span class="form-label">已掌握技能</span>
+                <textarea id="skills" placeholder="如：Java、Python、数据分析、写作..."></textarea>
+            </div>
+            <div class="form-group">
+                <span class="form-label">兴趣方向</span>
+                <input id="interests" placeholder="如：互联网、教育、金融...">
+            </div>
+            <div class="row">
+                <div class="form-group half">
+                    <span class="form-label">城市</span>
+                    <input id="city" placeholder="如：杭州">
+                </div>
+                <div class="form-group half">
+                    <span class="form-label">期望薪资</span>
+                    <input id="salary" placeholder="如：2000-5000">
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group half">
+                    <span class="form-label">工作类型</span>
+                    <select id="workType">
+                        <option value="">不限</option><option value="兼职">兼职</option><option value="实习">实习</option><option value="校招">校招</option><option value="全职">全职</option>
+                    </select>
+                </div>
+                <div class="form-group half">
+                    <span class="form-label">工作时长</span>
+                    <select id="workDuration">
+                        <option value="">灵活</option><option value="短期">短期</option><option value="长期">长期</option><option value="周末">周末</option>
+                    </select>
+                </div>
+            </div>
+            <div class="toggle-row">
+                <span class="toggle-label">🚀 同时推荐副业/自由职业方向</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="includeSideHustle" onchange="toggleSideHustle()">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <button class="btn" id="matchBtn" onclick="matchJobs()">🎯 开始匹配</button>
+        </div>
+    </div>
+
+    <!-- 加载 -->
+    <div class="section hidden" id="loadingSection">
+        <div class="loading">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <span class="loading-text">AI 正在分析你的优势...</span>
+            <span style="font-size:12px;color:#999;margin-top:6px">预计等待 30-60 秒</span>
+        </div>
+    </div>
+
+    <!-- 结果 -->
+    <div class="section hidden" id="resultSection"></div>
+
+    <script th:inline="javascript">
+        var savedFormData = {};
+
+        function toggleSideHustle() {
+            // visual only, value read on submit
+        }
+
+        async function matchJobs() {
+            var major = document.getElementById('major').value.trim();
+            var skills = document.getElementById('skills').value.trim();
+            if (!major && !skills) return alert('请至少填写专业或技能');
+
+            // Save form data for back button
+            savedFormData = {
+                major: major, skills: skills,
+                interests: document.getElementById('interests').value.trim(),
+                city: document.getElementById('city').value.trim(),
+                expectedSalary: document.getElementById('salary').value.trim(),
+                workType: document.getElementById('workType').value,
+                workDuration: document.getElementById('workDuration').value,
+                includeSideHustle: document.getElementById('includeSideHustle').checked
+            };
+
+            document.getElementById('formSection').classList.add('hidden');
+            document.getElementById('resultSection').classList.add('hidden');
+            document.getElementById('loadingSection').classList.remove('hidden');
+
+            try {
+                var res = await fetch('/api/career/job-match', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(savedFormData)
+                });
+                var data = await res.json();
+                document.getElementById('loadingSection').classList.add('hidden');
+                if (data.code === 200 && data.data.recommendations) {
+                    showResult(data.data);
+                    document.getElementById('resultSection').scrollIntoView({behavior:'smooth'});
+                } else {
+                    alert(data.msg || '匹配失败');
+                    document.getElementById('formSection').classList.remove('hidden');
+                }
+            } catch (e) {
+                document.getElementById('loadingSection').classList.add('hidden');
+                alert('网络错误，请重试');
+                document.getElementById('formSection').classList.remove('hidden');
+            }
+        }
+
+        function showResult(data) {
+            var html = '<span class="result-header">🎯 为你推荐 ' + data.recommendations.length + ' 个方向</span>';
+            data.recommendations.forEach(function(j){
+                html += '<div class="job-card">' +
+                    '<div class="job-top"><span class="job-title">' + escapeHtml(j.title) + '</span><span class="job-type">' + escapeHtml(j.type) + '</span></div>';
+                // Tags
+                if (j.tags && j.tags.length) {
+                    html += '<div class="tag-chips">';
+                    j.tags.forEach(function(t){ html += '<span class="tag-chip">' + escapeHtml(t) + '</span>'; });
+                    html += '</div>';
+                }
+                html += '<div class="job-meta"><span>💰 ' + escapeHtml(j.salaryRange) + '</span><span class="match">⭐ ' + (j.matchScore||'--') + '分</span></div>' +
+                    '<div class="job-section"><span class="job-section-title">推荐理由</span><span class="job-section-text">' + escapeHtml(j.reason) + '</span></div>' +
+                    (j.skillsNeeded ? '<div class="job-section"><span class="job-section-title">需要补充的技能</span><span class="job-section-text">' + escapeHtml(j.skillsNeeded) + '</span></div>' : '') +
+                    (j.howToFind ? '<div class="job-section"><span class="job-section-title">怎么找到这类工作</span><span class="job-section-text">' + escapeHtml(j.howToFind) + '</span></div>' : '') +
+                    '</div>';
+            });
+
+            // Side hustle card
+            if (data.sideHustles && data.sideHustles.length) {
+                html += '<div class="side-card"><div class="side-card-title">🚀 副业/自由职业推荐</div>';
+                data.sideHustles.forEach(function(s){
+                    html += '<div style="margin-bottom:10px"><span style="font-weight:600;font-size:14px;color:#333">' + escapeHtml(s.title) + '</span>' +
+                        '<span style="font-size:12px;color:#888;display:block">' + escapeHtml(s.description) + '</span></div>';
+                });
+                html += '</div>';
+            }
+
+            html += '<button class="btn" style="background:#fff;color:#667eea;border:2px solid #667eea;margin-top:16px" onclick="backToForm()">🔄 修改信息重新匹配</button>';
+            document.getElementById('resultSection').innerHTML = html;
+            document.getElementById('resultSection').classList.remove('hidden');
+        }
+
+        function backToForm() {
+            // Restore form data
+            if (savedFormData.major !== undefined) document.getElementById('major').value = savedFormData.major;
+            if (savedFormData.skills !== undefined) document.getElementById('skills').value = savedFormData.skills;
+            if (savedFormData.interests !== undefined) document.getElementById('interests').value = savedFormData.interests;
+            if (savedFormData.city !== undefined) document.getElementById('city').value = savedFormData.city;
+            if (savedFormData.expectedSalary !== undefined) document.getElementById('salary').value = savedFormData.expectedSalary;
+            if (savedFormData.workType !== undefined) document.getElementById('workType').value = savedFormData.workType;
+            if (savedFormData.workDuration !== undefined) document.getElementById('workDuration').value = savedFormData.workDuration;
+            if (savedFormData.includeSideHustle !== undefined) document.getElementById('includeSideHustle').checked = savedFormData.includeSideHustle;
+            document.getElementById('resultSection').classList.add('hidden');
+            document.getElementById('resultSection').innerHTML = '';
+            document.getElementById('formSection').classList.remove('hidden');
+            window.scrollTo({top:0, behavior:'smooth'});
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            var div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML.replace(/\n/g, '<br>');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>删除客户</title>
+    <style>
+        body { font-family: "Microsoft YaHei", sans-serif; }
+        .nav { text-align: center; margin: 20px 0; }
+        .nav a { margin: 0 10px; text-decoration: none; color: #4CAF50; font-weight: bold; }
+    </style>
+</head>
+<body bgcolor="#e0ffff">
+<div class="nav">
+    <a href="/customer/list">客户列表</a>
+    <a href="/customer/query">客户查询</a>
+    <a href="/customer/add">添加客户</a>
+    <a href="/customer/edit">修改客户</a>
+    <a href="/customer/delete">删除客户</a>
+</div>
+<div style="text-align: center">
+    <h3>删除客户</h3>
+    <form action="/customer/delete" method="post">
+        <table style="text-align: center;margin: auto">
+            <tr><td>客户编号：</td><td><input type="text" name="id" required></td></tr>
+        </table>
+        <br>
+        <input type="submit" value="确认删除">&nbsp;&nbsp;
+    </form>
+</div>
+</body>
+</html>

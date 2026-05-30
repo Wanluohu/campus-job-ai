@@ -1,0 +1,18 @@
+{
+  "pages": [
+    "pages/career/career",
+    "pages/resume/resume",
+    "pages/interview/interview",
+    "pages/jobmatch/jobmatch",
+    "pages/chat/chat",
+    "pages/history/history"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#1a1a2e",
+    "navigationBarTitleText": "校园求职助手",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f5f5"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

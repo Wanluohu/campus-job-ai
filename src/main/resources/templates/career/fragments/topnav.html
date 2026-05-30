@@ -1,0 +1,51 @@
+<div class="topnav" th:fragment="body">
+  <div class="topnav-brand">🎓 校园求职助手</div>
+  <div class="topnav-tabs">
+    <a class="topnav-tab" href="/career/index">首页</a>
+    <a class="topnav-tab" href="/career/resume">简历优化</a>
+    <a class="topnav-tab" href="/career/interview">面试模拟</a>
+    <a class="topnav-tab" href="/career/jobmatch">兼职匹配</a>
+  </div>
+</div>
+
+<style>
+.topnav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  padding: 10px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(102,126,234,0.3);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.topnav-brand {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+}
+.topnav-tabs {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.topnav-tab {
+  font-size: 12px;
+  color: rgba(255,255,255,0.75);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.topnav-tab:hover, .topnav-tab.active {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  font-weight: 600;
+}
+</style>

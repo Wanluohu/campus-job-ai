@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        .mytd {
+            width: 80px;
+            font-size: xx-small;
+            color: red;
+        }
+    </style>
+    <title>Food信息管理系统</title>
+</head>
+<body bgcolor="#e0ffff">
+<br>
+<div style="text-align: center">
+    <form action="/check" method="post">
+        <table style="text-align: center;margin: auto">
+            <caption><h4>Food查询</h4></caption>
+            <tr>
+                <td>ID</td>
+                <td><input type="text" name="id" size="16" th:value="${id}"></td>
+                <td class="mytd"><span th:if="${result.getCode()==404}" th:text="${result.getMsg()}"></span></td>
+            </tr>
+        </table>
+        <br>
+        <input type="submit" value="查 询">&nbsp;&nbsp;
+    </form>
+</div>
+</body>
+</html>

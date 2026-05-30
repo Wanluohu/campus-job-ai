@@ -1,0 +1,124 @@
+<view class="container">
+  <!-- 顶部导航 -->
+  <view class="nav-bar">
+    <view class="nav-back" bindtap="goBack">
+      <text>← 返回</text>
+    </view>
+    <text class="nav-title">AI 面试模拟</text>
+    <view class="nav-placeholder"></view>
+  </view>
+
+  <!-- ==================== 面试设置阶段 ==================== -->
+  <view class="setup-section" wx:if="{{setupMode}}">
+    <view class="setup-card">
+      <view class="setup-icon">🤖</view>
+      <text class="setup-title">AI 模拟面试官</text>
+      <text class="setup-desc">选择你的目标岗位，AI 面试官将进行5轮专业面试</text>
+
+      <!-- 岗位选择 -->
+      <view class="form-group">
+        <text class="form-label">目标岗位</text>
+        <picker mode="selector" range="{{jobTypes}}" value="{{jobTypeIndex}}" bindchange="onJobTypeChange">
+          <view class="picker-value">{{jobTypes[jobTypeIndex]}}  ▾</view>
+        </picker>
+      </view>
+
+      <!-- 难度选择 -->
+      <view class="form-group">
+        <text class="form-label">面试难度</text>
+        <view class="difficulty-options">
+          <view
+            wx:for="{{difficulties}}"
+            wx:key="*this"
+            class="diff-btn {{difficulty === item ? 'diff-active' : ''}}"
+            data-diff="{{item}}"
+            bindtap="onDifficultyChange"
+          >
+            {{item}}
+          </view>
+        </view>
+      </view>
+
+      <!-- 面试须知 -->
+      <view class="tips-box">
+        <text class="tips-title">📋 面试须知</text>
+        <text class="tips-item">• 共 5 轮问答，难度递进</text>
+        <text class="tips-item">• 每轮回答后 AI 会给出简短反馈</text>
+        <text class="tips-item">• 面试结束后给出综合评价和结果</text>
+        <text class="tips-item">• 认真作答，效果更接近真实面试</text>
+      </view>
+
+      <button class="btn-start" bindtap="startInterview" disabled="{{loading}}">
+        {{loading ? '准备中...' : '🚀 开始面试'}}
+      </button>
+    </view>
+  </view>
+
+  <!-- ==================== 面试进行阶段 ==================== -->
+  <view class="chat-section" wx:if="{{!setupMode}}">
+    <!-- 消息列表 -->
+    <scroll-view
+      class="msg-list"
+      scroll-y
+      scroll-into-view="{{scrollToView}}"
+      scroll-with-animation
+      enhanced
+      show-scrollbar="{{false}}"
+    >
+      <!-- 面试信息横幅 -->
+      <view class="interview-banner">
+        <text>🎯 {{jobTypes[jobTypeIndex]}} · {{difficulty}} · 5轮面试</text>
+      </view>
+
+      <!-- 消息气泡 -->
+      <view
+        wx:for="{{messages}}"
+        wx:key="id"
+        id="msg-{{item.id}}"
+        class="msg-item {{item.role}}"
+      >
+        <view class="msg-avatar">
+          <text wx:if="{{item.role === 'interviewer'}}">🤖</text>
+          <text wx:else>👤</text>
+        </view>
+        <view class="bubble {{item.role}}">
+          <text class="bubble-text" selectable>{{item.content}}</text>
+        </view>
+      </view>
+
+      <!-- 面试完成提示 -->
+      <view class="complete-banner" wx:if="{{interviewComplete}}">
+        <text class="complete-icon">🎉</text>
+        <text class="complete-text">面试已完成！</text>
+        <button class="btn-restart" bindtap="restartInterview">🔄 再来一次</button>
+      </view>
+
+      <!-- 加载指示器 -->
+      <view class="loading-indicator" wx:if="{{loading}}">
+        <view class="typing-dots">
+          <view class="dot"></view>
+          <view class="dot"></view>
+          <view class="dot"></view>
+        </view>
+        <text class="loading-text">面试官思考中...</text>
+      </view>
+    </scroll-view>
+
+    <!-- 底部输入栏 -->
+    <view class="input-bar" wx:if="{{!interviewComplete}}">
+      <input
+        class="msg-input"
+        value="{{inputValue}}"
+        placeholder="输入你的回答..."
+        placeholder-class="input-placeholder"
+        bindinput="onInput"
+        bindconfirm="sendAnswer"
+        confirm-type="send"
+        disabled="{{loading}}"
+      />
+      <button class="send-btn {{inputValue ? 'active' : ''}}" bindtap="sendAnswer" disabled="{{loading || !inputValue}}">
+        回答
+      </button>
+    </view>
+  </view>
+</view>

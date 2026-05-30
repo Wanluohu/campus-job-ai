@@ -1,0 +1,26 @@
+<div class="privacy-banner" id="privacyBanner" th:fragment="body">
+  <div class="privacy-banner-icon">🔒</div>
+  <div class="privacy-banner-body">
+    <span class="privacy-banner-title">隐私保护声明</span>
+    <span class="privacy-banner-text">你粘贴的简历内容仅用于AI实时分析，<b>不会存储、不会外传、不会用于训练</b>。</span>
+    <span class="privacy-banner-warn">⚠️ 安全提示：建议隐去身份证号、银行卡号、家庭住址等敏感信息后再使用。</span>
+    <span class="privacy-banner-tip">💡 只需粘贴文本简历（经历、技能、自我评价等），无需上传文件。</span>
+  </div>
+</div>
+
+<style>
+.privacy-banner {
+  display: flex;
+  background: #f0f4ff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  border-left: 4px solid #667eea;
+}
+.privacy-banner-icon { font-size: 28px; margin-right: 12px; flex-shrink: 0; line-height: 1.2; }
+.privacy-banner-body { flex: 1; }
+.privacy-banner-title { display: block; font-size: 14px; font-weight: 600; color: #667eea; margin-bottom: 4px; }
+.privacy-banner-text { display: block; font-size: 12px; color: #666; line-height: 1.7; }
+.privacy-banner-warn { display: block; font-size: 12px; color: #e67e22; line-height: 1.7; margin-top: 2px; }
+.privacy-banner-tip { display: block; font-size: 12px; color: #999; line-height: 1.7; }
+</style>

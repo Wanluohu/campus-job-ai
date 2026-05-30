@@ -1,0 +1,47 @@
+<view class="container">
+  <!-- 顶部标题 -->
+  <view class="header">
+    <text class="header-title">🎓 校园求职助手</text>
+    <text class="header-subtitle">AI 帮你拿 offer</text>
+  </view>
+
+  <!-- 功能卡片列表 -->
+  <view class="card-list">
+
+    <!-- 简历优化 -->
+    <view class="feature-card resume-card" bindtap="goToResume">
+      <view class="card-icon">📝</view>
+      <view class="card-body">
+        <text class="card-title">AI 简历优化</text>
+        <text class="card-desc">上传简历，AI 帮你分析缺点、优化表达、提升竞争力</text>
+      </view>
+      <view class="card-arrow">→</view>
+    </view>
+
+    <!-- 面试模拟 -->
+    <view class="feature-card interview-card" bindtap="goToInterview">
+      <view class="card-icon">💬</view>
+      <view class="card-body">
+        <text class="card-title">AI 面试模拟</text>
+        <text class="card-desc">选择岗位方向，AI 面试官提问，答题后给反馈和评分</text>
+      </view>
+      <view class="card-arrow">→</view>
+    </view>
+
+    <!-- 工作匹配 -->
+    <view class="feature-card match-card" bindtap="goToJobMatch">
+      <view class="card-icon">🎯</view>
+      <view class="card-body">
+        <text class="card-title">AI 兼职匹配</text>
+        <text class="card-desc">填写你的专业和技能，AI 推荐最适合的兼职和实习方向</text>
+      </view>
+      <view class="card-arrow">→</view>
+    </view>
+
+  </view>
+
+  <!-- 底部提示 -->
+  <view class="footer-tip">
+    <text class="tip-text">💡 所有功能均基于 AI 大模型，结果仅供参考</text>
+  </view>
+</view>

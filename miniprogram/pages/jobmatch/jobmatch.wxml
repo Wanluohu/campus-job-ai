@@ -1,0 +1,94 @@
+<view class="container">
+  <!-- 顶部导航 -->
+  <view class="nav-bar">
+    <view class="nav-back" bindtap="goBack">
+      <text>← 返回</text>
+    </view>
+    <text class="nav-title">AI 兼职匹配</text>
+    <view class="nav-placeholder"></view>
+  </view>
+
+  <!-- 输入表单（未匹配时） -->
+  <view class="form-section" wx:if="{{!showResult}}">
+    <view class="form-card">
+      <text class="form-title">📋 填写你的信息，AI 帮你找方向</text>
+
+      <view class="form-group">
+        <text class="form-label">专业</text>
+        <input class="form-input" value="{{major}}" placeholder="如：计算机科学、市场营销..." bindinput="onMajorInput" />
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">已掌握的技能</text>
+        <textarea class="form-textarea" value="{{skills}}" placeholder="如：Java、Python、数据分析、写作..." bindinput="onSkillsInput" maxlength="500" />
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">兴趣方向</text>
+        <input class="form-input" value="{{interests}}" placeholder="如：互联网、教育、金融..." bindinput="onInterestsInput" />
+      </view>
+
+      <view class="form-row">
+        <view class="form-group half">
+          <text class="form-label">城市</text>
+          <input class="form-input" value="{{city}}" placeholder="如：杭州" bindinput="onCityInput" />
+        </view>
+        <view class="form-group half">
+          <text class="form-label">期望薪资</text>
+          <input class="form-input" value="{{expectedSalary}}" placeholder="如：2000-5000" bindinput="onSalaryInput" />
+        </view>
+      </view>
+
+      <button class="btn-match {{loading ? 'btn-disabled' : ''}}" bindtap="matchJobs" disabled="{{loading}}">
+        {{loading ? '🎯 AI 分析中...' : '🎯 开始匹配'}}
+      </button>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading-section" wx:if="{{loading}}">
+    <view class="typing-dots">
+      <view class="dot"></view>
+      <view class="dot"></view>
+      <view class="dot"></view>
+    </view>
+    <text class="loading-text">AI 正在分析你的优势和就业市场...</text>
+  </view>
+
+  <!-- 匹配结果 -->
+  <view class="result-section" wx:if="{{showResult && recommendations.length > 0}}">
+    <text class="result-title">🎯 为你推荐 {{recommendations.length}} 个方向</text>
+
+    <view class="job-card" wx:for="{{recommendations}}" wx:key="title">
+      <view class="job-header">
+        <text class="job-title">{{item.title}}</text>
+        <view class="job-type">{{item.type}}</view>
+      </view>
+
+      <view class="job-meta">
+        <text class="meta-item">💰 {{item.salaryRange}}</text>
+        <text class="meta-item match-score">⭐ {{item.matchScore}}分</text>
+      </view>
+
+      <view class="job-section">
+        <text class="job-section-title">推荐理由</text>
+        <text class="job-section-text">{{item.reason}}</text>
+      </view>
+
+      <view class="job-section" wx:if="{{item.skillsNeeded}}">
+        <text class="job-section-title">需要补充的技能</text>
+        <text class="job-section-text">{{item.skillsNeeded}}</text>
+      </view>
+
+      <view class="job-section" wx:if="{{item.howToFind}}">
+        <text class="job-section-title">怎么找到这类工作</text>
+        <text class="job-section-text">{{item.howToFind}}</text>
+      </view>
+    </view>
+
+    <button class="btn-rematch" bindtap="matchJobs">🔄 修改信息重新匹配</button>
+  </view>
+
+  <!-- 底部占位 -->
+  <view style="height: 40rpx;"></view>
+</view>

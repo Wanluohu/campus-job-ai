@@ -1,0 +1,26 @@
+# Maven
+target/
+*.jar
+*.war
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temp
+.claude/
+cloudflared.exe
+
+# Demo module
+demo/
+
+# Database files
+*.sql

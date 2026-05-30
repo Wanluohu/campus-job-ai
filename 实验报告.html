@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>实验：数据库Mybatis编程 - 实验报告</title>
+<style>
+body { font-family: "宋体", SimSun, serif; line-height: 1.8; max-width: 800px; margin: 0 auto; padding: 30px; }
+h1 { text-align: center; font-size: 22pt; font-family: "黑体", SimHei, sans-serif; }
+h2 { font-size: 16pt; font-family: "黑体", SimHei, sans-serif; border-bottom: 1px solid #333; margin-top: 30px; }
+h3 { font-size: 14pt; font-family: "黑体", SimHei, sans-serif; }
+p { text-indent: 2em; font-size: 12pt; }
+pre { background: #f5f5f5; padding: 10px; border: 1px solid #ddd; font-size: 10pt; overflow-x: auto; }
+code { font-family: "Consolas", monospace; }
+table { border-collapse: collapse; margin: 15px auto; width: 90%; }
+th, td { border: 1px solid #000; padding: 6px 10px; text-align: center; font-size: 11pt; }
+th { background: #ddd; }
+.no-indent { text-indent: 0; }
+.center { text-align: center; text-indent: 0; }
+</style>
+</head>
+<body>
+
+<h1>实验：数据库 MyBatis 编程</h1>
+
+<p class="center"><b>学院：</b>软件学院&emsp;&emsp;<b>专业：</b>软件工程&emsp;&emsp;<b>姓名：</b>万罗虎&emsp;&emsp;<b>班级：</b>软件2307</p>
+
+<hr>
+
+<h2>一、实验目的</h2>
+<p>1. 掌握 Spring Boot 框架的基本结构和开发方法。</p>
+<p>2. 掌握 MyBatis 持久层框架的工作原理和使用方法。</p>
+<p>3. 掌握 Spring Boot 整合 MyBatis 进行数据库操作的方法。</p>
+<p>4. 掌握 MVC 设计模式在 Web 开发中的应用。</p>
+
+<h2>二、实验环境</h2>
+<table>
+<tr><th>类别</th><th>工具/技术</th><th>版本</th></tr>
+<tr><td>操作系统</td><td>Windows 11</td><td>—</td></tr>
+<tr><td>开发工具</td><td>IntelliJ IDEA</td><td>2021.2</td></tr>
+<tr><td>JDK</td><td>Corretto JDK</td><td>11.0.23</td></tr>
+<tr><td>框架</td><td>Spring Boot</td><td>2.7.18</td></tr>
+<tr><td>持久层</td><td>MyBatis Spring Boot Starter</td><td>2.3.1</td></tr>
+<tr><td>模板引擎</td><td>Thymeleaf</td><td>（随Spring Boot）</td></tr>
+<tr><td>数据库</td><td>MySQL</td><td>8.0</td></tr>
+<tr><td>数据库管理工具</td><td>Navicat Premium</td><td>—</td></tr>
+</table>
+
+<h2>三、实验内容与步骤</h2>
+
+<h3>3.1 数据库设计</h3>
+<p>创建数据库 <code>jdbctest1</code>，包含以下三张表：</p>
+
+<p><b>(1) food 表（食品信息表）</b></p>
+<table>
+<tr><th>字段名</th><th>类型</th><th>说明</th></tr>
+<tr><td>id</td><td>BIGINT(主键，自增)</td><td>食品编号</td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>食品名称</td></tr>
+<tr><td>type</td><td>VARCHAR(255)</td><td>食品类型</td></tr>
+<tr><td>state</td><td>VARCHAR(255)</td><td>状态（上架/下架）</td></tr>
+<tr><td>price</td><td>VARCHAR(255)</td><td>价格</td></tr>
+<tr><td>quantity</td><td>VARCHAR(255)</td><td>库存量</td></tr>
+</table>
+
+<p><b>(2) student 表（学生信息表）</b></p>
+<table>
+<tr><th>字段名</th><th>类型</th><th>说明</th></tr>
+<tr><td>id</td><td>INT(主键，自增)</td><td>学生编号</td></tr>
+<tr><td>name</td><td>VARCHAR(50)</td><td>姓名</td></tr>
+<tr><td>gender</td><td>VARCHAR(10)</td><td>性别</td></tr>
+<tr><td>age</td><td>INT</td><td>年龄</td></tr>
+<tr><td>major</td><td>VARCHAR(100)</td><td>专业</td></tr>
+</table>
+
+<p><b>(3) customer 表（客户信息表）—— 扩展任务</b></p>
+<table>
+<tr><th>字段名</th><th>类型</th><th>说明</th></tr>
+<tr><td>id</td><td>INT(主键，自增)</td><td>客户编号</td></tr>
+<tr><td>name</td><td>VARCHAR(50)</td><td>姓名</td></tr>
+<tr><td>gender</td><td>VARCHAR(10)</td><td>性别</td></tr>
+<tr><td>age</td><td>INT</td><td>年龄</td></tr>
+<tr><td>address</td><td>VARCHAR(100)</td><td>地址</td></tr>
+<tr><td>phone</td><td>VARCHAR(20)</td><td>电话</td></tr>
+</table>
+
+<h3>3.2 创建 Spring Boot 项目</h3>
+<p>在 IDEA 中创建 Spring Boot 项目，选择以下依赖：</p>
+<table>
+<tr><th>分类</th><th>依赖</th></tr>
+<tr><td>Web</td><td>Spring Web</td></tr>
+<tr><td>Template Engines</td><td>Thymeleaf</td></tr>
+<tr><td>Developer Tools</td><td>Lombok</td></tr>
+<tr><td>SQL</td><td>MyBatis Framework、MySQL Driver</td></tr>
+</table>
+<p>项目基础包为 <code>org.example.mydemo</code>，并创建以下子包：<code>controller</code>、<code>entity</code>、<code>service</code>、<code>repository</code>、<code>other</code>。</p>
+
+<h3>3.3 编写 Java 代码</h3>
+
+<p><b>(1) 通用返回结果类 Result</b></p>
+<p>定义统一的响应结果类，包含状态码 code、提示信息 msg 和返回数据 data 三个字段，使用 Lombok 的 @Data 注解自动生成 getter/setter。</p>
+
+<p><b>(2) 实体类 Food / Customer</b></p>
+<p>分别对应 food 表和 customer 表，使用 @Data 注解简化代码。</p>
+
+<p><b>(3) Repository 接口（Mapper 层）</b></p>
+<p>使用 @Mapper 注解标识 MyBatis 映射接口，定义增删改查方法。例如 FoodRepository 包含：</p>
+<ul>
+<li><code>Food findFood(Integer id)</code> —— 按ID查询</li>
+<li><code>List&lt;Food&gt; queryAll()</code> —— 查询全部</li>
+<li><code>int insertOne(Food food)</code> —— 插入一条记录</li>
+<li><code>int updateById(String id, int price)</code> —— 按ID更新库存</li>
+<li><code>int deleteById(String id)</code> —— 按ID删除</li>
+</ul>
+
+<p><b>(4) Service 层</b></p>
+<p>定义业务逻辑接口和实现类。FoodServiceImpl 中实现了根据 ID 查询食品信息的业务逻辑：若食品存在则返回 code=200 及数据，否则返回 code=404 及错误提示。</p>
+
+<p><b>(5) Controller 层</b></p>
+<p>MyController1：处理前端页面请求，包括首页展示（/index）和查询请求（/check），查询成功跳转到 home.html，失败返回 index.html 并提示错误。</p>
+<p>MyController2：提供 REST 风格的 CRUD 接口，以及页面跳转方法。包括：</p>
+<ul>
+<li>GET /get —— 按商品ID查询食品（JSON返回）</li>
+<li>GET /getall —— 获取全部食品（JSON返回）</li>
+<li>GET /getall2 —— 获取全部食品并渲染列表页面</li>
+<li>GET/POST /add —— 添加食品页面与表单处理</li>
+<li>GET/POST /set —— 修改库存页面与表单处理</li>
+<li>GET/POST /del —— 删除食品页面与表单处理</li>
+</ul>
+
+<h3>3.4 编写 MyBatis XML 映射文件</h3>
+<p>在 <code>resources/mapper/FoodMapper.xml</code> 中定义 SQL 语句和结果映射：</p>
+<ul>
+<li>&lt;resultMap&gt; 定义数据库字段与 Java 属性的映射关系</li>
+<li>&lt;select&gt; 定义查询语句，id 对应 Mapper 接口方法名</li>
+<li>&lt;insert&gt; 定义插入语句</li>
+<li>&lt;update&gt; 定义更新语句</li>
+<li>&lt;delete&gt; 定义删除语句</li>
+</ul>
+
+<h3>3.5 编写前端页面</h3>
+<p>使用 Thymeleaf 模板引擎编写前端页面，主要包括：</p>
+<table>
+<tr><th>页面</th><th>文件名</th><th>功能说明</th></tr>
+<tr><td>食品查询页</td><td>index.html</td><td>输入ID查询食品，显示错误提示</td></tr>
+<tr><td>查询结果页</td><td>home.html</td><td>展示查询到的食品详细信息</td></tr>
+<tr><td>食品列表页</td><td>allfood.html</td><td>以表格展示全部食品</td></tr>
+<tr><td>添加食品页</td><td>add.html</td><td>表单录入食品信息并提交</td></tr>
+<tr><td>修改库存页</td><td>set.html</td><td>输入ID和新库存量进行更新</td></tr>
+<tr><td>删除食品页</td><td>del.html</td><td>输入ID删除对应食品记录</td></tr>
+</table>
+
+<h3>3.6 配置 application.yml</h3>
+<pre>server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/jdbctest1?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  thymeleaf:
+    cache: false
+    encoding: UTF-8
+    mode: HTML
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: org.example.mydemo.entity
+  configuration:
+    map-underscore-to-camel-case: true</pre>
+
+<h2>四、扩展任务：客户信息管理系统</h2>
+<p>参考实验指导书内容，使用 Spring Boot + MyBatis 框架开发一个公司客户信息管理系统，实现客户信息的增删改查功能。</p>
+
+<h3>4.1 功能设计</h3>
+<table>
+<tr><th>功能</th><th>URL</th><th>说明</th></tr>
+<tr><td>客户列表</td><td>/customer/list</td><td>分页展示所有客户信息</td></tr>
+<tr><td>客户查询</td><td>/customer/query</td><td>按编号查询客户详细信息</td></tr>
+<tr><td>添加客户</td><td>/customer/add</td><td>录入新客户信息（姓名、性别、年龄、地址、电话）</td></tr>
+<tr><td>修改客户</td><td>/customer/edit</td><td>按编号修改客户地址</td></tr>
+<tr><td>删除客户</td><td>/customer/delete</td><td>按编号删除客户记录</td></tr>
+</table>
+
+<h3>4.2 核心代码</h3>
+<p><b>Customer 实体类</b>：包含 id、name、gender、age、address、phone 六个属性。</p>
+<p><b>CustomerRepository</b>：使用 @Mapper 注解，定义 findById、queryAll、insertOne、updateById、deleteById 五个方法。</p>
+<p><b>CustomerServiceImpl</b>：实现业务逻辑，每个方法返回统一的 Result 对象，包含状态码和提示信息。</p>
+<p><b>CustomerController</b>：使用 @Controller 和 @RequestMapping("/customer") 注解，处理前端请求。</p>
+<p><b>CustomerMapper.xml</b>：在 resources/mapper/ 目录下定义 SQL 映射。</p>
+
+<h2>五、项目结构</h2>
+<pre>mybatis-demo/
+├── pom.xml
+├── src/main/java/org/example/mydemo/
+│   ├── MyDemoApplication.java          # 启动类
+│   ├── controller/
+│   │   ├── MyController1.java          # Food 页面控制器
+│   │   ├── MyController2.java          # Food REST 控制器
+│   │   └── CustomerController.java     # 客户管理控制器
+│   ├── entity/
+│   │   ├── Food.java                   # 食品实体类
+│   │   └── Customer.java              # 客户实体类
+│   ├── repository/
+│   │   ├── FoodRepository.java         # Food Mapper 接口
+│   │   └── CustomerRepository.java     # Customer Mapper 接口
+│   ├── service/
+│   │   ├── FoodService.java            # Food 业务接口
+│   │   ├── FoodServiceImpl.java        # Food 业务实现
+│   │   ├── CustomerService.java        # Customer 业务接口
+│   │   └── CustomerServiceImpl.java    # Customer 业务实现
+│   └── other/
+│       └── Result.java                 # 统一返回结果类
+├── src/main/resources/
+│   ├── application.yml                 # 配置文件
+│   ├── mapper/
+│   │   ├── FoodMapper.xml              # Food SQL 映射
+│   │   └── CustomerMapper.xml          # Customer SQL 映射
+│   └── templates/
+│       ├── index.html                  # Food 查询首页
+│       ├── home.html                   # 查询结果页
+│       ├── add.html                    # 添加食品页
+│       ├── set.html                    # 修改库存页
+│       ├── del.html                    # 删除食品页
+│       ├── allfood.html                # 全部食品列表
+│       └── customer/
+│           ├── list.html               # 客户列表页
+│           ├── query.html              # 客户查询页
+│           ├── add.html                # 添加客户页
+│           ├── edit.html               # 修改客户页
+│           └── delete.html             # 删除客户页</pre>
+
+<h2>六、运行结果</h2>
+<p>启动项目后，在浏览器中访问以下地址，得到对应的页面效果：</p>
+
+<!-- 测试项1 -->
+<h3>1. Food 查询首页 —— http://localhost:8080/index</h3>
+<p>预期效果：显示 Food 查询页面，输入 ID 进行查询。</p>
+<div style="border:2px dashed #999; min-height:200px; text-align:center; color:#999; padding:20px; margin:10px 0;">
+【请在此处插入截图：index.html 页面效果】
+</div>
+
+<!-- 测试项2 -->
+<h3>2. 查询成功 —— http://localhost:8080/index → 输入1 → 查询</h3>
+<p>预期效果：跳转到 home.html，显示 ID=1（面包）的详细信息。</p>
+<div style="border:2px dashed #999; min-height:200px; text-align:center; color:#999; padding:20px; margin:10px 0;">
+【请在此处插入截图：查询ID=1成功结果页面】
+</div>
+
+<!-- 测试项3 -->
+<h3>3. 查询失败 —— http://localhost:8080/index → 输入99 → 查询</h3>
+<p>预期效果：查询不存在的 ID，页面显示红色提示"不存在！"。</p>
+<div style="border:2px dashed #999; min-height:200px; text-align:center; color:#999; padding:20px; margin:10px 0;">
+【请在此处插入截图：查询ID=99失败提示页面】
+</div>
+
+<!-- 测试项4 -->
+<h3>4. 全部食品列表 —— http://localhost:8080/getall2</h3>
+<p>预期效果：以表格形式展示全部食品信息。</p>
+<div style="border:2px dashed #999; min-height:200px; text-align:center; color:#999; padding:20px; margin:10px 0;">
+【请在此处插入截图：全部食品列表页面】
+</div>
+
+<!-- 测试项5 -->
+<h3>5. 添加食品 —— http://localhost:8080/add</h3>
+<p>预期效果：显示添加食品的表单页面，可录入名称、类型、状态、价格、库存量。</p>
+<div style="border:2px dashed #999; min-height:200px; text-align:center; color:#999; padding:20px; margin:10px 0;">
+【请在此处插入截图：添加食品页面】
+</div>
+
+<!-- 测试项6 -->
+<h3>6. 修改库存 —— http://localhost:8080/set</h3>
+<p>预期效果：输入食品 ID 和新库存量，提交后更新对应记录。</p>
+<div style="border:2px dashed #999; min-height:200px; text-align:center; color:#999; padding:20px; margin:10px 0;">
+【请在此处插入截图：修改库存页面及更新结果】
+</div>
+
+<!-- 测试项7 -->
+<h3>7. 删除食品 —— http://localhost:8080/del</h3>
+<p>预期效果：输入食品 ID，提交后删除对应记录。</p>
+<div style="border:2px dashed #999; min-height:200px; text-align:center; color:#999; padding:20px; margin:10px 0;">
+【请在此处插入截图：删除食品页面及删除结果】
+</div>
+
+<!-- 测试项8 -->
+<h3>8. REST 接口-查询单个 —— http://localhost:8080/get?pid=1</h3>
+<p>预期效果：浏览器返回 JSON 格式的食品数据。</p>
+<div style="border:2px dashed #999; min-height:200px; text-align:center; color:#999; padding:20px; margin:10px 0;">
+【请在此处插入截图：get?pid=1 返回的 JSON 数据】
+</div>
+
+<!-- 测试项9 -->
+<h3>9. REST 接口-查询全部 —— http://localhost:8080/getall</h3>
+<p>预期效果：浏览器返回 JSON 格式的全部食品列表。</p>
+<div style="border:2px dashed #999; min-height:200px; text-align:center; color:#999; padding:20px; margin:10px 0;">
+【请在此处插入截图：getall 返回的 JSON 数据】
+</div>
+
+<hr>
+<h3 style="color:#0066cc;">扩展任务——客户信息管理系统</h3>
+
+<!-- 测试项10 -->
+<h3>10. 客户列表 —— http://localhost:8080/customer/list</h3>
+<p>预期效果：表格展示所有客户信息，包含导航栏可跳转其他功能页面。</p>
+<div style="border:2px dashed #999; min-height:200px; text-align:center; color:#999; padding:20px; margin:10px 0;">
+【请在此处插入截图：客户列表页面】
+</div>
+
+<!-- 测试项11 -->
+<h3>11. 客户查询 —— http://localhost:8080/customer/query</h3>
+<p>预期效果：输入客户编号查询，显示客户详细信息（编号、姓名、性别、年龄、地址、电话）。</p>
+<div style="border:2px dashed #999; min-height:200px; text-align:center; color:#999; padding:20px; margin:10px 0;">
+【请在此处插入截图：客户查询页面及查询结果】
+</div>
+
+<!-- 测试项12 -->
+<h3>12. 添加客户 —— http://localhost:8080/customer/add</h3>
+<p>预期效果：显示添加客户表单，可填写姓名、性别、年龄、地址、电话。</p>
+<div style="border:2px dashed #999; min-height:200px; text-align:center; color:#999; padding:20px; margin:10px 0;">
+【请在此处插入截图：添加客户页面及添加成功结果】
+</div>
+
+<!-- 测试项13 -->
+<h3>13. 修改客户 —— http://localhost:8080/customer/edit</h3>
+<p>预期效果：输入客户编号和新地址，提交后更新对应客户的地址信息。</p>
+<div style="border:2px dashed #999; min-height:200px; text-align:center; color:#999; padding:20px; margin:10px 0;">
+【请在此处插入截图：修改客户页面及更新结果】
+</div>
+
+<!-- 测试项14 -->
+<h3>14. 删除客户 —— http://localhost:8080/customer/delete</h3>
+<p>预期效果：输入客户编号，提交后删除对应客户记录。</p>
+<div style="border:2px dashed #999; min-height:200px; text-align:center; color:#999; padding:20px; margin:10px 0;">
+【请在此处插入截图：删除客户页面及删除结果】
+</div>
+
+<h2>七、实验总结</h2>
+<p>通过本次实验，我深入理解了以下知识点：</p>
+
+<p><b>1. Spring Boot 项目结构：</b>Spring Boot 采用分层架构，将代码分为 Controller（控制器层）、Service（业务逻辑层）、Repository（数据访问层）和 Entity（实体层），实现了各层之间的解耦，符合 MVC 设计模式。</p>
+
+<p><b>2. MyBatis 持久层技术：</b>MyBatis 通过 XML 映射文件或注解的方式将 SQL 语句与 Java 方法绑定，相较于传统的 JDBC 编程，大大简化了数据库操作的代码量。通过 resultMap 可以灵活定义数据库字段与 Java 对象属性的映射关系。</p>
+
+<p><b>3. Thymeleaf 模板引擎：</b>Thymeleaf 可以在 HTML 页面中通过 <code>th:text</code>、<code>th:each</code>、<code>th:if</code> 等属性动态渲染数据，实现了前后端的数据交互。</p>
+
+<p><b>4. Lombok 工具：</b>使用 @Data 注解自动生成 getter、setter、toString 等方法，减少了大量的样板代码。</p>
+
+<p><b>5. 遇到的问题与解决方案：</b></p>
+<ul>
+<li>Maven 依赖下载缓慢：配置阿里云 Maven 镜像解决。</li>
+<li>Lombok 注解不生效：在 IDEA 中安装 Lombok 插件并启用注解处理器。</li>
+<li>MySQL 连接失败：确保 MySQL 服务已启动，检查连接配置是否正确。</li>
+</ul>
+
+<p>通过本次实验，我掌握了 Spring Boot + MyBatis 整合开发的基本流程，能够独立完成一个具备完整前后端交互的 Web 应用程序。</p>
+
+</body>
+</html>
