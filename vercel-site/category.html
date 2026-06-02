@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>备考资料推荐 - AI智能选书</title>
+<style>
+:root{--primary:#4F46E5;--bg:#F0F2F7;--card:#FFF;--text:#1E293B;--text2:#64748B;--border:#E2E8F0;--s:0 4px 12px rgba(0,0,0,.06);--slg:0 8px 30px rgba(0,0,0,.08);--r:18px;--rs:12px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+a{text-decoration:none;color:inherit}
+
+/* Topbar */
+.tb{background:linear-gradient(135deg,#0F172A,#312E81);color:#fff;padding:15px 18px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100}
+.tb-back{font-size:22px;cursor:pointer;padding:6px;color:#fff;border-radius:8px;transition:all .2s}
+.tb-back:hover{background:rgba(255,255,255,.1)}
+.tb-t{font-size:18px;font-weight:800}
+.tb-s{font-size:11px;color:rgba(255,255,255,.6)}
+
+.main{max-width:540px;margin:0 auto;padding:22px 16px}
+
+/* Banner */
+.ban{background:linear-gradient(135deg,#EEF2FF,#E0E7FF);border-radius:var(--r);padding:20px;margin-bottom:22px;display:flex;align-items:center;gap:14px;border:1px solid #DDD6FE}
+.bico{font-size:44px;flex-shrink:0}
+.bt{font-size:16px;font-weight:800;margin-bottom:4px}
+.bd{font-size:12px;color:var(--text2);line-height:1.6}
+
+/* Cat chips */
+.cscroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:18px;margin-bottom:10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.cscroll::-webkit-scrollbar{display:none}
+.cchip{flex-shrink:0;padding:9px 18px;border-radius:22px;font-size:13px;font-weight:700;cursor:pointer;transition:all .25s;white-space:nowrap;background:var(--card);color:var(--text2);border:2px solid #E2E8F0}
+.cchip.active,.cchip:hover{background:#4F46E5;color:#fff;border-color:#4F46E5;box-shadow:0 4px 15px rgba(79,70,229,.3)}
+
+/* Header */
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.st{font-size:21px;font-weight:900}
+.sc{font-size:13px;color:var(--text2);background:#F1F5F9;padding:4px 12px;border-radius:12px}
+
+/* Product */
+.pgrid{display:flex;flex-direction:column;gap:16px;margin-bottom:36px}
+.pcard{background:var(--card);border-radius:var(--r);padding:20px;box-shadow:var(--s);transition:all .25s;border:1px solid #F1F5F9}
+.pcard:hover{transform:translateY(-2px);box-shadow:var(--slg);border-color:#DDD6FE}
+.prow{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px}
+.pcov{width:84px;height:112px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:36px;color:#fff}
+.pcov.g0{background:linear-gradient(135deg,#667eea,#764ba2)}.pcov.g1{background:linear-gradient(135deg,#f093fb,#f5576c)}
+.pcov.g2{background:linear-gradient(135deg,#4facfe,#00f2fe)}.pcov.g3{background:linear-gradient(135deg,#43e97b,#38f9d7)}
+.pcov.g4{background:linear-gradient(135deg,#fa709a,#fee140)}.pcov.g5{background:linear-gradient(135deg,#a8edea,#fed6e3)}
+.pinfo{flex:1;min-width:0}
+.pn{font-size:16px;font-weight:800;margin-bottom:3px;line-height:1.35}
+.ps{font-size:12px;color:#94A3B8;margin-bottom:8px}
+.ptags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+.ptags span{font-size:11px;padding:4px 10px;border-radius:14px;background:#F1F5F9;color:var(--text2);font-weight:500}
+.ptags .stars{color:#F59E0B;font-weight:700}
+.ppl{display:flex;align-items:baseline;gap:8px}
+.pprice{font-size:26px;font-weight:900;color:#EF4444}
+.pplabel{font-size:12px;color:#94A3B8}
+
+.btn-b{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border-radius:14px;text-align:center;font-size:15px;font-weight:700;color:#fff;transition:all .25s;background:linear-gradient(135deg,#FF6B35,#F53B14);letter-spacing:.5px}
+.btn-b:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(245,59,20,.3)}
+.btn-b:active{transform:scale(.97)}
+.bf{text-align:center;margin-top:8px;font-size:11px;color:#94A3B8}
+
+/* AI CTA */
+.aicta{background:linear-gradient(140deg,#1E1B4B,#312E81);border-radius:var(--r);padding:28px 20px;text-align:center;margin-bottom:36px;color:#fff}
+.aico{font-size:48px;display:block;margin-bottom:12px}
+.ait{font-size:19px;font-weight:800;margin-bottom:6px}
+.aid{font-size:14px;color:rgba(255,255,255,.7);margin-bottom:18px}
+.btn-ai{display:inline-block;padding:14px 40px;border-radius:30px;background:linear-gradient(135deg,#FBBF24,#F59E0B);color:#1E1B4B;font-size:15px;font-weight:800;transition:all .25s}
+.btn-ai:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(251,191,36,.4)}
+
+/* Footer */
+.footer{text-align:center;padding:28px 0 48px;color:var(--text2);font-size:12px;line-height:2.2}
+.footer a{color:#4F46E5;font-weight:600}
+
+.loading{text-align:center;padding:40px;color:var(--text2)}
+</style>
+</head>
+<body>
+
+<div class="tb"><a href="/tools" class="tb-back">←</a><div><div class="tb-t" id="topTitle">备考资料推荐 📖</div><div class="tb-s">✨ AI精选 · 全网口碑最佳</div></div></div>
+
+<div class="main">
+
+<!-- Banner -->
+<div class="ban"><span class="bico" id="banIcon">📖</span><div class="ban-body"><div class="bt" id="banTitle">🏆 精选备考好书</div><div class="bd">📊 以下书籍均为全网销量领先、口碑最好的版本，点击可直接前往淘宝品牌店铺购买 🛒</div></div></div>
+
+<!-- Cat chips -->
+<div class="cscroll" id="catChips"></div>
+
+<!-- Products -->
+<div class="sh"><div class="st" id="secTitle">📚 推荐书单</div><div class="sc" id="secCount">共0本</div></div>
+<div class="pgrid" id="prodGrid"><div class="loading">加载中...</div></div>
+
+<!-- AI CTA -->
+<div class="aicta"><span class="aico">🤖</span><div class="ait">不知道选哪本？让AI帮你挑</div><div class="aid">回答5个问题，30秒出专属推荐</div><a href="/tools" class="btn-ai">🎯 开始AI智能测评</a></div>
+
+<div class="footer"><a href="/tools">🏠 返回首页</a><br>📚 © 2026 校园AI助手 · 让每本资料都买得值</div></div>
+
+<script>
+// ===== Data =====
+const CATS = [
+  {id:"cet4",name:"英语四级",icon:"📝"},{id:"cet6",name:"英语六级",icon:"🎯"},{id:"kaoyan",name:"考研专区",icon:"📚"},
+  {id:"jiaoshi",name:"教师资格证",icon:"👩‍🏫"},{id:"computer",name:"计算机等级",icon:"💻"},{id:"gongkao",name:"公务员考试",icon:"🏛"}
+];
+const CATMAP = {}; CATS.forEach(function(c){CATMAP[c.id]=c});
+
+// Get category from URL
+var path = window.location.pathname;
+var cat = path.split('/').pop() || 'cet4';
+
+async function load(){
+  try{
+    var r = await fetch('/api/products?category='+cat);
+    var d = await r.json();
+    var data = d.data||{};
+    var ps = data.products||[];
+    var cn = data.categoryName||cat;
+    var icon = CATMAP[cat]?CATMAP[cat].icon:'📖';
+
+    document.getElementById('topTitle').textContent = cn+'备考资料推荐 📖';
+    document.getElementById('banIcon').textContent = icon;
+    document.getElementById('banTitle').textContent = '🏆 精选'+cn+'备考好书';
+    document.getElementById('secTitle').textContent = '📚 '+cn+'推荐书单';
+    document.getElementById('secCount').textContent = '共'+ps.length+'本';
+
+    // Cat chips
+    var chips=''; CATS.forEach(function(c){chips+='<a class="cchip'+(c.id===cat?' active':'')+'" href="/tools/'+c.id+'">'+c.icon+' '+c.name+'</a>'});
+    document.getElementById('catChips').innerHTML=chips;
+
+    // Products
+    var grades=['g0','g1','g2','g3','g4','g5'];
+    var h=''; ps.forEach(function(p,i){
+      h+='<div class="pcard"><div class="prow"><div class="pcov '+grades[i%6]+'">📖</div><div class="pinfo">';
+      h+='<div class="pn">'+esc(p.name)+'</div><div class="ps">'+esc(p.subtitle||'')+'</div>';
+      h+='<div class="ptags"><span class="stars">⭐ '+p.rating+'</span><span>已售 '+fmt(p.sold)+'</span><span>'+esc(p.feature||'')+'</span></div>';
+      h+='<div class="ppl"><span class="pprice">¥'+p.price+'</span><span class="pplabel">官方店铺价</span></div>';
+      h+='</div></div><a href="'+esc(p.link||'#')+'" target="_blank" rel="nofollow" class="btn-b">🛒 去淘宝查看详情 · ¥'+p.price+' 👈</a><div class="bf">🔐 跳转至淘宝/天猫官方店铺 · 平台保障售后</div></div>';
+    });
+    if(!ps.length)h='<div class="loading">暂无商品数据</div>';
+    document.getElementById('prodGrid').innerHTML=h;
+  }catch(e){document.getElementById('prodGrid').innerHTML='<div class="loading">加载失败，请刷新重试</div>'}
+}
+
+function esc(s){if(!s)return'';var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function fmt(n){if(n>=10000)return(n/10000).toFixed(1)+'万';if(n>=1000)return(n/1000).toFixed(1)+'k';return String(n)}
+
+load();
+</script></body></html>

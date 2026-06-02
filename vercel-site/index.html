@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>考证资料AI推荐 - 10秒找到最适合你的备考书</title>
+<meta name="description" content="AI智能分析你的水平和目标，精准推荐考证资料。四六级、考研、教资、计算机、公务员。">
+<style>
+:root{--primary:#4F46E5;--bg:#F0F2F7;--card:#FFF;--text:#1E293B;--text2:#64748B;--border:#E2E8F0;--success:#10B981;--s:0 4px 12px rgba(0,0,0,.06);--slg:0 8px 30px rgba(0,0,0,.08);--r:18px;--rs:12px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+
+/* Hero */
+.hero{background:linear-gradient(160deg,#0F172A,#1E1B4B 40%,#312E81 70%,#4C1D95);color:#fff;padding:52px 20px 64px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-30%;left:-30%;width:160%;height:160%;background:radial-gradient(ellipse at 25% 40%,rgba(99,102,241,.12) 0,transparent 55%),radial-gradient(ellipse at 75% 60%,rgba(168,85,247,.1) 0,transparent 55%);animation:shimmer 10s ease-in-out infinite}
+@keyframes shimmer{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.hero-ct{position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 18px;border-radius:20px;background:rgba(255,255,255,.12);font-size:13px;border:1px solid rgba(255,255,255,.18);margin-bottom:22px}
+.hero-badge .dot{width:8px;height:8px;border-radius:50%;background:#34D399;box-shadow:0 0 8px #34D399;animation:livePulse 2s infinite}
+@keyframes livePulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-size:34px;font-weight:900;line-height:1.25;margin-bottom:14px;letter-spacing:-1px}
+.hero h1 .hl{background:linear-gradient(135deg,#FBBF24,#F59E0B 50%,#F97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:15px;color:rgba(255,255,255,.72);margin-bottom:30px;line-height:1.8}
+.hero-stats{display:flex;justify-content:center;gap:36px}
+.hero-st{text-align:center}.hero-st-num{font-size:30px;font-weight:900;color:#FBBF24}.hero-st-label{font-size:12px;color:rgba(255,255,255,.6);margin-top:4px}
+
+/* Main */
+.main{max-width:540px;margin:-28px auto 0;padding:0 16px;position:relative;z-index:2}
+
+/* Quiz */
+.qcard{background:var(--card);border-radius:var(--r);padding:26px 22px;box-shadow:var(--slg);margin-bottom:16px}
+.qq{font-size:18px;font-weight:800;margin-bottom:6px}
+.qhint{font-size:12px;color:var(--text2);margin-bottom:18px}
+.qopts{display:flex;flex-direction:column;gap:10px}
+.qopt{display:flex;align-items:center;padding:14px 16px;border-radius:var(--rs);border:2px solid #E2E8F0;cursor:pointer;transition:all .2s;font-size:14px;font-weight:500;background:#F8FAFC}
+.qopt:hover{border-color:#A5B4FC;background:#EEF2FF;transform:translateX(2px)}
+.qopt.sel{border-color:var(--primary);background:#EEF2FF;font-weight:700;box-shadow:0 0 0 5px rgba(99,102,241,.08)}
+.qico{font-size:26px;margin-right:14px;flex-shrink:0}
+.qarr{margin-left:auto;color:var(--primary);font-size:20px;opacity:0;transition:all .2s}
+.qopt.sel .qarr{opacity:1}
+.btn-next{width:100%;padding:15px;border-radius:14px;border:none;font-size:17px;font-weight:800;cursor:pointer;transition:all .25s;margin-top:18px;background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;letter-spacing:.5px}
+.btn-next:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(79,70,229,.35)}
+.btn-next:active{transform:scale(.97)}
+.btn-next:disabled{background:#CBD5E1;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* Loading */
+.lcard{display:none;background:var(--card);border-radius:var(--r);padding:56px 24px;box-shadow:var(--slg);text-align:center;margin-bottom:16px}
+.lcard.show{display:block}
+.lspinner{width:72px;height:72px;margin:0 auto 28px;position:relative}
+.lspinner::before{content:'';position:absolute;inset:0;border-radius:50%;border:4px solid #E2E8F0;border-top-color:#4F46E5;animation:spin .8s linear infinite}
+.lspinner::after{content:'🧠';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:28px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ltitle{font-size:19px;font-weight:800;margin-bottom:6px}
+.ldesc{font-size:13px;color:var(--text2);animation:fadeText 2.5s infinite}
+@keyframes fadeText{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* Result */
+.rsec{display:none}
+.rsec.show{display:block}
+.rhdr{background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border-radius:var(--r);padding:22px 20px;margin-bottom:16px;border-left:5px solid var(--success)}
+.rht{font-size:18px;font-weight:800;color:#065F46;margin-bottom:8px}
+.rp{font-size:14px;color:#047857;line-height:1.8}
+.rcard{background:var(--card);border-radius:var(--r);padding:22px;box-shadow:var(--s);margin-bottom:14px;position:relative;overflow:hidden;transition:all .25s}
+.rcard:hover{transform:translateY(-2px);box-shadow:var(--slg)}
+.rcard.main{border:2px solid #FCD34D;background:linear-gradient(180deg,#FFFBEB,#FFF 40%)}
+.rcard.main::after{content:'👑 AI首推';position:absolute;top:14px;right:14px;font-size:12px;font-weight:800;color:#92400E;background:linear-gradient(135deg,#FEF3C7,#FDE68A);padding:5px 12px;border-radius:20px;border:1px solid #FCD34D}
+.rbn{font-size:18px;font-weight:800;margin-bottom:4px;padding-right:80px}
+.rbs{font-size:12px;color:#94A3B8;margin-bottom:6px}
+.rbr{font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.7;padding:10px 14px;background:#F8FAFC;border-radius:10px}
+.rbm{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.rbm span{font-size:12px;color:var(--text2);background:#F1F5F9;padding:5px 12px;border-radius:20px;font-weight:500}
+.rbm .stars{color:#F59E0B;font-weight:700}
+.rpr{display:flex;align-items:baseline;gap:10px;margin-bottom:14px}
+.rpr .price{font-size:28px;font-weight:900;color:#EF4444}
+.rpr .tip{font-size:12px;color:#94A3B8}
+.btn-buy{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;border-radius:14px;border:none;font-size:16px;font-weight:700;cursor:pointer;transition:all .25s;color:#fff;text-decoration:none;background:linear-gradient(135deg,#FF6B35,#F53B14)}
+.btn-buy:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(245,59,20,.3)}
+.bfoot{text-align:center;margin-top:8px;font-size:11px;color:#94A3B8}
+
+/* Plan */
+.plan{background:linear-gradient(135deg,#EEF2FF,#F5F3FF);border-radius:var(--r);padding:22px;margin-bottom:16px;border:1px solid #DDD6FE}
+.ptitle{font-size:17px;font-weight:800;margin-bottom:10px}
+.ptext{font-size:14px;color:#4C1D95;line-height:2}
+.enc{text-align:center;padding:24px;margin-bottom:24px;font-size:17px;font-weight:700;color:#4F46E5;background:linear-gradient(135deg,#EEF2FF,#E0E7FF);border-radius:var(--r)}
+.btn-rwrap{text-align:center;margin-bottom:32px}
+.btn-retry{padding:14px 40px;border-radius:30px;border:2px solid #4F46E5;background:#fff;color:#4F46E5;font-size:15px;font-weight:700;cursor:pointer;transition:all .25s}
+.btn-retry:hover{background:#4F46E5;color:#fff;box-shadow:0 8px 25px rgba(79,70,229,.25)}
+.hidden{display:none!important}
+
+/* Category Grid */
+.chead{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.ch{font-size:21px;font-weight:900}
+.csub{font-size:13px;color:var(--text2)}
+.cgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:36px}
+@media(min-width:480px){.cgrid{grid-template-columns:repeat(3,1fr)}}
+.ccard{background:var(--card);border-radius:var(--rs);padding:22px 14px;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:all .25s;text-align:center;border:1px solid transparent;position:relative;overflow:hidden}
+.ccard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.ccard:nth-child(1)::before{background:linear-gradient(90deg,#4F46E5,#7C3AED)}
+.ccard:nth-child(2)::before{background:linear-gradient(90deg,#EC4899,#F97316)}
+.ccard:nth-child(3)::before{background:linear-gradient(90deg,#0D9488,#06B6D4)}
+.ccard:nth-child(4)::before{background:linear-gradient(90deg,#F59E0B,#EF4444)}
+.ccard:nth-child(5)::before{background:linear-gradient(90deg,#8B5CF6,#EC4899)}
+.ccard:nth-child(6)::before{background:linear-gradient(90deg,#0891B2,#0D9488)}
+.ccard:hover{transform:translateY(-3px);box-shadow:var(--slg);border-color:#DDD6FE}
+.ccard:active{transform:scale(.96)}
+.cico{font-size:38px;display:block;margin-bottom:12px}
+.cname{font-size:15px;font-weight:800;margin-bottom:4px}
+.cdesc{font-size:11px;color:var(--text2);line-height:1.5}
+.cbadge{position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:12px}
+.cbadge.hot{background:#FEF3C7;color:#92400E}.cbadge.rec{background:#DCFCE7;color:#166534}.cbadge.top{background:#EDE9FE;color:#5B21B6}
+.cbadge.need{background:#FCE7F3;color:#9D174D}.cbadge.rise{background:#CFFAFE;color:#155E75}.cbadge.high{background:#FFE4E6;color:#9F1239}
+
+/* Why */
+.why{margin-bottom:40px}
+.wgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.witem{background:var(--card);border-radius:var(--rs);padding:22px 14px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:all .25s}
+.witem:hover{transform:translateY(-2px);box-shadow:var(--s)}
+.wico{font-size:36px;display:block;margin-bottom:10px}
+.wt{font-size:14px;font-weight:800;margin-bottom:4px}
+.wd{font-size:11px;color:var(--text2);line-height:1.6}
+
+/* Footer */
+.footer{text-align:center;padding:32px 16px 48px;color:var(--text2);font-size:12px;line-height:2.2}
+.footer a{color:#4F46E5;font-weight:600}
+
+/* Toast */
+.toast{position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:9999;padding:12px 26px;border-radius:12px;font-size:14px;color:#fff;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,.25);animation:toastIn .3s ease;max-width:90%;text-align:center;pointer-events:none}
+.toast.ok{background:#10B981}.toast.err{background:#EF4444}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-24px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+</style>
+</head>
+<body>
+
+<section class="hero"><div class="hero-ct">
+<div class="hero-badge"><span class="dot"></span>AI实时分析 · 精准推荐</div>
+<h1>10秒找到最适合你的<br><span class="hl">考证资料</span></h1>
+<p class="hero-sub">🎓 回答5个简单问题，AI帮你从海量书籍中精准匹配<br>💡 不再纠结买哪本，不花冤枉钱</p>
+<div class="hero-stats">
+<div class="hero-st"><div class="hero-st-num">5,800+</div><div class="hero-st-label">已帮助同学</div></div>
+<div class="hero-st"><div class="hero-st-num">98%</div><div class="hero-st-label">好评如潮</div></div>
+<div class="hero-st"><div class="hero-st-num">30秒</div><div class="hero-st-label">出结果</div></div>
+</div></div></section>
+
+<div class="main">
+
+<!-- Quiz -->
+<div id="quizSec"><div class="qcard" id="quizCard"><div class="qq" id="quizQ"></div><div class="qhint" id="quizHint"></div><div class="qopts" id="quizOpts"></div><button class="btn-next" id="btnNext" disabled>下一题 →</button></div></div>
+
+<!-- Loading -->
+<div class="lcard" id="loadCard"><div class="lspinner"></div><div class="ltitle">🧠 AI正在为你分析...</div><div class="ldesc" id="loadDesc">🔍 匹配最适合的备考资料</div></div>
+
+<!-- Result -->
+<div class="rsec" id="resSec"><div id="resContent"></div><div class="btn-rwrap"><button class="btn-retry" onclick="resetQuiz()">🔄 重新测评一次</button></div></div>
+
+<!-- Categories -->
+<div class="chead"><div><div class="ch">📚 按考试分类浏览</div><div class="csub">🔍 也可直接查看精选推荐</div></div></div>
+<div class="cgrid" id="catGrid"></div>
+
+<!-- Why -->
+<div class="ch" style="margin-bottom:16px">🛡 为什么同学们都在用</div>
+<div class="why"><div class="wgrid">
+<div class="witem"><span class="wico">🤖</span><div class="wt">🎯 AI精准匹配</div><div class="wd">大模型分析学习情况，比你自己挑更准</div></div>
+<div class="witem"><span class="wico">🏪</span><div class="wt">🛍 官方店铺直达</div><div class="wd">所有链接直达淘宝/京东品牌店铺</div></div>
+<div class="witem"><span class="wico">🔒</span><div class="wt">🛡 隐私安全保障</div><div class="wd">测评数据不存储不泄露</div></div>
+<div class="witem"><span class="wico">💯</span><div class="wt">🆓 永久免费测评</div><div class="wd">AI测评不收一分钱，买不买随你</div></div>
+</div></div>
+
+<div class="footer">🛒 本站推荐商品均来自淘宝/京东官方店铺，售后由平台全程保障<br>📖 考证资料推荐 · 💰 让每一分钱花在刀刃上<br>🎓 © 2026 校园AI助手</div></div>
+
+<script>
+// ===== Data =====
+const CATEGORIES = [
+  {id:"cet4",name:"英语四级",icon:"📝",desc:"大学必过第一关",badge:"🔥 热门"},
+  {id:"cet6",name:"英语六级",icon:"🎯",desc:"冲刺高分拿证书",badge:"💪 推荐"},
+  {id:"kaoyan",name:"考研专区",icon:"📚",desc:"政治+英语+数学+专业课",badge:"🏆 最全"},
+  {id:"jiaoshi",name:"教师资格证",icon:"👩‍🏫",desc:"综合素质+教育知识",badge:"✨ 刚需"},
+  {id:"computer",name:"计算机等级",icon:"💻",desc:"二级Office/Python/C",badge:"📈 热门"},
+  {id:"gongkao",name:"公务员考试",icon:"🏛",desc:"行测+申论+面试",badge:"🎖 高薪"}
+];
+const BADGE_CLASSES = ['hot','rec','top','need','rise','high'];
+
+// ===== Quiz =====
+const QS = [
+  {id:'exam',q:'你想考什么证书？',hint:'选一个你最想拿下的',
+    opts:[{v:'cet4',ico:'📝',l:'英语四级',d:'大学必过第一关'},{v:'cet6',ico:'🎯',l:'英语六级',d:'冲刺高分拿证书'},{v:'kaoyan',ico:'📚',l:'考研',d:'政治+英语+数学'},{v:'jiaoshi',ico:'👩‍🏫',l:'教师资格证',d:'当老师必备'},{v:'computer',ico:'💻',l:'计算机二级',d:'MS Office / Python'},{v:'gongkao',ico:'🏛',l:'公务员考试',d:'行测+申论'}]},
+  {id:'level',q:'你目前基础怎么样？',hint:'诚实选择，结果才准',
+    opts:[{v:'beginner',ico:'🌱',l:'基础薄弱',d:'几乎从零开始'},{v:'medium',ico:'🌿',l:'有一定基础',d:'学过但不扎实'},{v:'good',ico:'🌳',l:'基础较好',d:'系统学过，需要拔高'}]},
+  {id:'time',q:'还有多少备考时间？',hint:'时间不同，策略完全不同',
+    opts:[{v:'rush',ico:'⚡',l:'不到1个月',d:'紧急冲刺阶段'},{v:'normal',ico:'📅',l:'1-3个月',d:'正常备考节奏'},{v:'long',ico:'🗓',l:'3个月以上',d:'从容系统准备'}]},
+  {id:'style',q:'你喜欢怎么学习？',hint:'选最舒服的方式',
+    opts:[{v:'book',ico:'📖',l:'看书刷题',d:'纸质书+真题练习'},{v:'video',ico:'📺',l:'看视频课',d:'跟着老师系统学'},{v:'class',ico:'🏫',l:'报班跟学',d:'有老师带更安心'}]},
+  {id:'budget',q:'预算大概多少？',hint:'用于买资料的总预算',
+    opts:[{v:'50',ico:'💴',l:'50元以内',d:'精打细算型'},{v:'100',ico:'💵',l:'50-100元',d:'正常预算'},{v:'200',ico:'💸',l:'100-200元',d:'愿意投资'},{v:'',ico:'🤔',l:'没概念',d:'你先帮我推荐'}]}
+];
+let ci=0,ans={},sv=null;
+
+function rq(i){
+  if(i>=QS.length){submit();return}
+  var q=QS[i];document.getElementById('quizQ').textContent=q.q;document.getElementById('quizHint').textContent=q.hint;
+  sv=ans[q.id]||null;
+  var h='';q.opts.forEach(function(o){var s=sv===o.v?' sel':'';h+='<div class="qopt'+s+'" data-v="'+o.v+'" onclick="sel(this,\''+o.v+'\')"><span class="qico">'+o.ico+'</span><div><div style="font-size:14px;font-weight:500">'+o.l+'</div><div style="font-size:11px;color:#94a3b8">'+o.d+'</div></div><span class="qarr">✓</span></div>'});
+  document.getElementById('quizOpts').innerHTML=h;ub();
+}
+function sel(el,v){document.querySelectorAll('.qopt').forEach(function(o){o.classList.remove('sel')});el.classList.add('sel');sv=v;ans[QS[ci].id]=v;ub()}
+function ub(){var b=document.getElementById('btnNext');b.disabled=!sv;b.textContent=ci===QS.length-1?(sv?'🚀 开始AI推荐':'先选一个'):(sv?'下一题 →':'先选一个 →')}
+function nq(){if(!sv)return;if(ci<QS.length-1){ci++;sv=ans[QS[ci].id]||null;rq(ci);document.getElementById('quizCard').scrollIntoView({behavior:'smooth',block:'center'})}else submit()}
+
+async function submit(){
+  document.getElementById('quizSec').classList.add('hidden');document.getElementById('loadCard').classList.add('show');document.getElementById('resSec').classList.remove('show');
+  var txts=['🔬 正在分析你的考试目标...','🎯 匹配最适合的备考资料...','📝 制定个性化学习建议...','⏳ 马上就好...'];var j=0;
+  var iv=setInterval(function(){document.getElementById('loadDesc').textContent=txts[j%txts.length];j++},2000);
+  try{
+    var r=await fetch('/api/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(ans)});
+    var d=await r.json();clearInterval(iv);document.getElementById('loadCard').classList.remove('show');
+    if(d.code===200&&d.data)renderRes(d.data);else{toast('⚠️ 推荐失败，请重试','err');resetQuiz()}
+  }catch(e){clearInterval(iv);document.getElementById('loadCard').classList.remove('show');toast('📡 网络错误，请检查网络','err');resetQuiz()}
+}
+
+function renderRes(data){
+  var a=data.analysis||{},ps=data.products||[],fb=data.fallback,h='';
+  if(fb)h+='<div style="background:#FEF3C7;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#92400E">⚠️ AI服务繁忙，已启用备用引擎，结果同样精准</div>';
+  if(a.profile)h+='<div class="rhdr"><div class="rht">✅ 分析完成！你的专属推荐如下</div><div class="rp">'+esc(a.profile)+'</div></div>';
+  ps.forEach(function(p,i){
+    var m=i===0,cls=m?'rcard main':'rcard';h+='<div class="'+cls+'"><div class="rbn">'+esc(p.name||'')+'</div><div class="rbs">'+esc(p.subtitle||'')+'</div>';
+    if(m&&a.mainReason)h+='<div class="rbr">💡 '+esc(a.mainReason)+'</div>';
+    else if(!m&&a.subReason)h+='<div class="rbr">💡 '+esc(a.subReason)+'</div>';
+    h+='<div class="rbm"><span class="stars">⭐ '+(p.rating||'4.8')+'</span><span>已售 '+fmt(p.sold||0)+'</span><span>'+esc(p.feature||'')+'</span></div>';
+    h+='<div class="rpr"><span class="price">¥'+(p.price||0)+'</span><span class="tip">（官方店铺价）</span></div>';
+    h+='<a href="'+esc(p.link||'#')+'" target="_blank" rel="nofollow" class="btn-buy">🛒 去淘宝查看详情 👈</a><div class="bfoot">🔐 跳转至淘宝/天猫官方店铺 · 平台保障售后</div></div>';
+  });
+  if(a.plan)h+='<div class="plan"><div class="ptitle">📋 专属学习计划</div><div class="ptext">'+esc(a.plan).replace(/\n/g,'<br>')+'</div></div>';
+  if(a.encouragement)h+='<div class="enc">💪 '+esc(a.encouragement)+'</div>';
+  document.getElementById('resContent').innerHTML=h;document.getElementById('resSec').classList.add('show');document.getElementById('resSec').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function resetQuiz(){ci=0;ans={};sv=null;document.getElementById('quizSec').classList.remove('hidden');document.getElementById('loadCard').classList.remove('show');document.getElementById('resSec').classList.remove('show');rq(0);document.getElementById('quizCard').scrollIntoView({behavior:'smooth',block:'center'})}
+
+// ===== Categories =====
+function renderCats(){
+  var h='';CATEGORIES.forEach(function(c,i){
+    h+='<a class="ccard" href="/tools/'+c.id+'"><span class="cico">'+c.icon+'</span><div class="cname">'+c.name+'</div><div class="cdesc">'+c.desc+'</div><span class="cbadge '+BADGE_CLASSES[i]+'">'+c.badge.replace(/[🔥💪🏆✨📈🎖]/g,'').trim()+'</span></a>';
+  });document.getElementById('catGrid').innerHTML=h;
+}
+
+function esc(s){if(!s)return'';var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function fmt(n){if(n>=10000)return(n/10000).toFixed(1)+'万';if(n>=1000)return(n/1000).toFixed(1)+'k';return String(n)}
+function toast(m,t){var e=document.createElement('div');e.className='toast '+(t||'ok');e.textContent=m;document.body.appendChild(e);setTimeout(function(){e.style.opacity='0';e.style.transition='opacity .3s'},2000);setTimeout(function(){e.remove()},2500)}
+
+document.getElementById('btnNext').addEventListener('click',nq);
+rq(0);renderCats();
+</script></body></html>
