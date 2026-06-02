@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>考证资料AI推荐 - 10秒找到最适合你的备考书</title>
+<meta name="description" content="AI智能分析，精准推荐考证资料。四六级、考研、教资、计算机、公务员。">
+<style>
+:root{--p:#4F46E5;--bg:#F0F2F7;--c:#FFF;--t:#1E293B;--t2:#64748B;--s:0 4px 12px rgba(0,0,0,.06);--sl:0 8px 30px rgba(0,0,0,.08);--r:18px;--rs:12px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--t);line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+
+.hero{background:linear-gradient(160deg,#0F172A,#1E1B4B 40%,#312E81 70%,#4C1D95);color:#fff;padding:52px 20px 64px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-30%;left:-30%;width:160%;height:160%;background:radial-gradient(ellipse at 25% 40%,rgba(99,102,241,.12) 0,transparent 55%),radial-gradient(ellipse at 75% 60%,rgba(168,85,247,.1) 0,transparent 55%);animation:sh 10s infinite}
+@keyframes sh{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.hc{position:relative;z-index:1}
+.hb{display:inline-flex;align-items:center;gap:6px;padding:6px 18px;border-radius:20px;background:rgba(255,255,255,.12);font-size:13px;border:1px solid rgba(255,255,255,.18);margin-bottom:22px}
+.hb .dot{width:8px;height:8px;border-radius:50%;background:#34D399;box-shadow:0 0 8px #34D399;animation:lp 2s infinite}
+@keyframes lp{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-size:34px;font-weight:900;line-height:1.25;margin-bottom:14px;letter-spacing:-1px}
+.hero h1 .hl{background:linear-gradient(135deg,#FBBF24,#F59E0B 50%,#F97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hs{font-size:15px;color:rgba(255,255,255,.72);margin-bottom:30px;line-height:1.8}
+.hst{display:flex;justify-content:center;gap:36px}.hsi{text-align:center}.hsin{font-size:30px;font-weight:900;color:#FBBF24}.hsil{font-size:12px;color:rgba(255,255,255,.6);margin-top:4px}
+
+.m{max-width:540px;margin:-28px auto 0;padding:0 16px;position:relative;z-index:2}
+
+.qc{background:var(--c);border-radius:var(--r);padding:26px 22px;box-shadow:var(--sl);margin-bottom:16px}
+.qq{font-size:18px;font-weight:800;margin-bottom:6px}.qh{font-size:12px;color:var(--t2);margin-bottom:18px}
+.qo{display:flex;flex-direction:column;gap:10px}
+.qoi{display:flex;align-items:center;padding:14px 16px;border-radius:var(--rs);border:2px solid #E2E8F0;cursor:pointer;transition:all .2s;font-size:14px;font-weight:500;background:#F8FAFC}
+.qoi:hover{border-color:#A5B4FC;background:#EEF2FF;transform:translateX(2px)}
+.qoi.s{border-color:var(--p);background:#EEF2FF;font-weight:700;box-shadow:0 0 0 5px rgba(99,102,241,.08)}
+.qic{font-size:26px;margin-right:14px;flex-shrink:0}
+.qar{margin-left:auto;color:var(--p);font-size:20px;opacity:0;transition:all .2s}
+.qoi.s .qar{opacity:1}
+
+.bn{width:100%;padding:15px;border-radius:14px;border:none;font-size:17px;font-weight:800;cursor:pointer;transition:all .25s;margin-top:18px;background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;letter-spacing:.5px}
+.bn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(79,70,229,.35)}.bn:active{transform:scale(.97)}
+.bn:disabled{background:#CBD5E1;cursor:not-allowed;transform:none;box-shadow:none}
+
+.lc{display:none;background:var(--c);border-radius:var(--r);padding:56px 24px;box-shadow:var(--sl);text-align:center;margin-bottom:16px}.lc.on{display:block}
+.ls{width:72px;height:72px;margin:0 auto 28px;position:relative}
+.ls::before{content:'';position:absolute;inset:0;border-radius:50%;border:4px solid #E2E8F0;border-top-color:#4F46E5;animation:spin .8s linear infinite}
+.ls::after{content:'🧠';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:28px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lt{font-size:19px;font-weight:800;margin-bottom:6px}.ld{font-size:13px;color:var(--t2)}
+
+.rs{display:none}.rs.on{display:block}
+.rh{background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border-radius:var(--r);padding:22px 20px;margin-bottom:16px;border-left:5px solid #10B981}
+.rht{font-size:18px;font-weight:800;color:#065F46;margin-bottom:8px}.rp{font-size:14px;color:#047857;line-height:1.8}
+.rc{background:var(--c);border-radius:var(--r);padding:22px;box-shadow:var(--s);margin-bottom:14px;position:relative;overflow:hidden;transition:all .25s}
+.rc:hover{transform:translateY(-2px);box-shadow:var(--sl)}
+.rc.m{border:2px solid #FCD34D;background:linear-gradient(180deg,#FFFBEB,#FFF 40%)}
+.rc.m::after{content:'👑 AI首推';position:absolute;top:14px;right:14px;font-size:12px;font-weight:800;color:#92400E;background:linear-gradient(135deg,#FEF3C7,#FDE68A);padding:5px 12px;border-radius:20px;border:1px solid #FCD34D}
+.rn{font-size:18px;font-weight:800;margin-bottom:4px;padding-right:80px}
+.rsub{font-size:12px;color:#94A3B8;margin-bottom:6px}
+.rre{font-size:13px;color:var(--t2);margin-bottom:14px;line-height:1.7;padding:10px 14px;background:#F8FAFC;border-radius:10px}
+.rm{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.rm span{font-size:12px;color:var(--t2);background:#F1F5F9;padding:5px 12px;border-radius:20px;font-weight:500}
+.rm .st{color:#F59E0B;font-weight:700}
+.rpr{display:flex;align-items:baseline;gap:10px;margin-bottom:14px}
+.rpr .pr{font-size:28px;font-weight:900;color:#EF4444}.rpr .ti{font-size:12px;color:#94A3B8}
+.bb{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;border-radius:14px;border:none;font-size:16px;font-weight:700;cursor:pointer;transition:all .25s;color:#fff;text-decoration:none;background:linear-gradient(135deg,#FF6B35,#F53B14)}
+.bb:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(245,59,20,.3)}.bf{text-align:center;margin-top:8px;font-size:11px;color:#94A3B8}
+
+.pl{background:linear-gradient(135deg,#EEF2FF,#F5F3FF);border-radius:var(--r);padding:22px;margin-bottom:16px;border:1px solid #DDD6FE}
+.pt{font-size:17px;font-weight:800;margin-bottom:10px}.px{font-size:14px;color:#4C1D95;line-height:2}
+.en{text-align:center;padding:24px;margin-bottom:24px;font-size:17px;font-weight:700;color:#4F46E5;background:linear-gradient(135deg,#EEF2FF,#E0E7FF);border-radius:var(--r)}
+.bw{text-align:center;margin-bottom:32px}
+.br{padding:14px 40px;border-radius:30px;border:2px solid #4F46E5;background:#fff;color:#4F46E5;font-size:15px;font-weight:700;cursor:pointer;transition:all .25s}
+.br:hover{background:#4F46E5;color:#fff;box-shadow:0 8px 25px rgba(79,70,229,.25)}.h{display:none!important}
+
+.chd{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.cx{font-size:21px;font-weight:900}.cxs{font-size:13px;color:var(--t2)}
+.cg{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:36px}
+@media(min-width:480px){.cg{grid-template-columns:repeat(3,1fr)}}
+.cc{background:var(--c);border-radius:var(--rs);padding:22px 14px;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:all .25s;text-align:center;border:1px solid transparent;position:relative;overflow:hidden}
+.cc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.cc:nth-child(1)::before{background:linear-gradient(90deg,#4F46E5,#7C3AED)}.cc:nth-child(2)::before{background:linear-gradient(90deg,#EC4899,#F97316)}
+.cc:nth-child(3)::before{background:linear-gradient(90deg,#0D9488,#06B6D4)}.cc:nth-child(4)::before{background:linear-gradient(90deg,#F59E0B,#EF4444)}
+.cc:nth-child(5)::before{background:linear-gradient(90deg,#8B5CF6,#EC4899)}.cc:nth-child(6)::before{background:linear-gradient(90deg,#0891B2,#0D9488)}
+.cc:hover{transform:translateY(-3px);box-shadow:var(--sl);border-color:#DDD6FE}.cc:active{transform:scale(.96)}
+.ci{font-size:38px;display:block;margin-bottom:12px}.cn{font-size:15px;font-weight:800;margin-bottom:4px}.cd{font-size:11px;color:var(--t2);line-height:1.5}
+.cb{position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:12px}
+.cb.h0{background:#FEF3C7;color:#92400E}.cb.h1{background:#DCFCE7;color:#166534}.cb.h2{background:#EDE9FE;color:#5B21B6}
+.cb.h3{background:#FCE7F3;color:#9D174D}.cb.h4{background:#CFFAFE;color:#155E75}.cb.h5{background:#FFE4E6;color:#9F1239}
+
+.wy{margin-bottom:40px}.wg{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.wi{background:var(--c);border-radius:var(--rs);padding:22px 14px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:all .25s}
+.wi:hover{transform:translateY(-2px);box-shadow:var(--s)}
+.wic{font-size:36px;display:block;margin-bottom:10px}.wt{font-size:14px;font-weight:800;margin-bottom:4px}.wd{font-size:11px;color:var(--t2);line-height:1.6}
+
+.ft{text-align:center;padding:32px 16px 48px;color:var(--t2);font-size:12px;line-height:2.2}.ft a{color:#4F46E5;font-weight:600}
+
+.toast{position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:9999;padding:12px 26px;border-radius:12px;font-size:14px;color:#fff;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,.25);animation:ti .3s ease;max-width:90%;text-align:center;pointer-events:none}
+.toast.ok{background:#10B981}.toast.er{background:#EF4444}
+@keyframes ti{from{opacity:0;transform:translateX(-50%) translateY(-24px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+</style>
+</head>
+<body>
+
+<section class="hero"><div class="hc">
+<div class="hb"><span class="dot"></span>AI实时分析 · 精准推荐</div>
+<h1>10秒找到最适合你的<br><span class="hl">考证资料</span></h1>
+<p class="hs">🎓 回答5个简单问题，AI帮你从海量书籍中精准匹配<br>💡 不再纠结买哪本，不花冤枉钱</p>
+<div class="hst">
+<div class="hsi"><div class="hsin">5,800+</div><div class="hsil">已帮助同学</div></div>
+<div class="hsi"><div class="hsin">98%</div><div class="hsil">好评如潮</div></div>
+<div class="hsi"><div class="hsin">30秒</div><div class="hsil">出结果</div></div>
+</div></div></section>
+
+<div class="m">
+<div id="qz"><div class="qc" id="qcard"><div class="qq" id="qQ"></div><div class="qh" id="qH"></div><div class="qo" id="qOps"></div><button class="bn" id="btnN" disabled>下一题 →</button></div></div>
+<div class="lc" id="lcard"><div class="ls"></div><div class="lt">🧠 AI正在为你分析...</div><div class="ld" id="lDesc">🔍 匹配最适合的备考资料</div></div>
+<div class="rs" id="rs"><div id="rCnt"></div><div class="bw"><button class="br" onclick="rst()">🔄 重新测评一次</button></div></div>
+
+<div class="chd"><div><div class="cx">📚 按考试分类浏览</div><div class="cxs">🔍 也可直接查看精选推荐</div></div></div>
+<div class="cg" id="cGrid"></div>
+
+<div class="cx" style="margin-bottom:16px">🛡 为什么同学们都在用</div>
+<div class="wy"><div class="wg">
+<div class="wi"><span class="wic">🤖</span><div class="wt">🎯 AI精准匹配</div><div class="wd">大模型分析学习情况</div></div>
+<div class="wi"><span class="wic">🏪</span><div class="wt">🛍 官方店铺直达</div><div class="wd">链接直达品牌店铺</div></div>
+<div class="wi"><span class="wic">🔒</span><div class="wt">🛡 隐私安全保障</div><div class="wd">数据不存储不泄露</div></div>
+<div class="wi"><span class="wic">💯</span><div class="wt">🆓 永久免费测评</div><div class="wd">不收一分钱</div></div>
+</div></div>
+
+<div class="ft">🛒 本站推荐商品均来自淘宝/京东官方店铺<br>📖 考证资料推荐 · 💰 让每一分钱花在刀刃上<br>🎓 © 2026 校园AI助手</div></div>
+
+<script>
+// ========== 全量商品数据 ==========
+var DB=[
+{n:"星火英语四级真题",s:"备考2026年12月",p:54.6,c:"cet4",f:"真题详解+模拟卷",r:4.8,sd:23000,l:"https://s.click.taobao.com/ZoCXwIl"},
+{n:"华研外语四级真题",s:"备考2026年6月",p:26.1,c:"cet4",f:"专四专项训练全套",r:4.7,sd:18000,l:"https://s.click.taobao.com/tIVxvIl"},
+{n:"闪过四级词汇速刷版",s:"考前急救组合",p:37.3,c:"cet4",f:"重点词+真题闪过",r:4.9,sd:56000,l:"https://s.click.taobao.com/oVSnvIl"},
+{n:"星火英语六级真题",s:"备考2026年6月",p:15.8,c:"cet6",f:"十合一通关+听力",r:4.8,sd:15000,l:"https://s.click.taobao.com/1UvWO9l"},
+{n:"华研外语六级真题",s:"淘金式详解",p:26.4,c:"cet6",f:"真题+词汇+听力+写作",r:4.7,sd:12000,l:"https://s.click.taobao.com/j04PO9l"},
+{n:"新东方六级词汇联想记忆法",s:"俞敏洪绿宝书",p:30.6,c:"cet6",f:"词根+联想双效记忆",r:4.8,sd:34000,l:"https://s.click.taobao.com/qlbXvIl"},
+{n:"肖秀荣考研政治1000题全家桶",s:"2027考研必备",p:32.1,c:"kaoyan",f:"肖四肖八+精讲精练",r:4.9,sd:89000,l:"https://s.click.taobao.com/VfjUvIl"},
+{n:"张宇考研数学强化36讲",s:"基础30讲+1000题",p:51,c:"kaoyan",f:"高数+线代+概率论",r:4.8,sd:45000,l:"https://s.click.taobao.com/68cQvIl"},
+{n:"红宝书考研英语词汇",s:"2027考研必备",p:59.9,c:"kaoyan",f:"词汇+真题+长难句",r:4.7,sd:62000,l:"https://s.click.taobao.com/Egh8O9l"},
+{n:"王道考研408计算机全套",s:"2027版四门专业课",p:25,c:"kaoyan",f:"网课+教材+真题笔记",r:4.9,sd:31000,l:"https://s.click.taobao.com/h6z5O9l"},
+{n:"中公教资综合素质+教育知识",s:"中职教师证资格",p:88,c:"jiaoshi",f:"教材+真题+预测卷",r:4.8,sd:41000,l:"https://s.click.taobao.com/BWSCvIl"},
+{n:"山香教资幼儿园保教知识",s:"2026新版全4册",p:16.1,c:"jiaoshi",f:"综合素质+保教知识",r:4.7,sd:28000,l:"https://s.click.taobao.com/htwwN9l"},
+{n:"未来教育计算机二级MS Office",s:"备考2026年9月",p:15.8,c:"computer",f:"上机题库+核心考点",r:4.8,sd:76000,l:"https://s.click.taobao.com/mPUtN9l"},
+{n:"未来教育计算机二级Python",s:"2026年考试",p:19.9,c:"computer",f:"题库+视频+模拟",r:4.6,sd:18000,l:"https://s.click.taobao.com/DbdpN9l"},
+{n:"中公国家公务员一本通",s:"2027国考备考",p:40,c:"gongkao",f:"笔试一本通+题库",r:4.8,sd:55000,l:"https://s.click.taobao.com/lnFwuIl"},
+{n:"粉笔公考行测5000题",s:"2027国省考通用",p:38.2,c:"gongkao",f:"决战行测五千题",r:4.9,sd:43000,l:"https://s.click.taobao.com/pzTuuIl"}
+];
+var CATS=[{id:"cet4",n:"英语四级",ico:"📝",d:"大学必过第一关",b:"🔥 热门"},{id:"cet6",n:"英语六级",ico:"🎯",d:"冲刺高分拿证书",b:"💪 推荐"},{id:"kaoyan",n:"考研专区",ico:"📚",d:"政治+英语+数学+专业课",b:"🏆 最全"},{id:"jiaoshi",n:"教师资格证",ico:"👩‍🏫",d:"综合素质+教育知识",b:"✨ 刚需"},{id:"computer",n:"计算机等级",ico:"💻",d:"二级Office/Python/C",b:"📈 热门"},{id:"gongkao",n:"公务员考试",ico:"🏛",d:"行测+申论+面试",b:"🎖 高薪"}];
+var EN={cet4:"英语四级",cet6:"英语六级",kaoyan:"考研",jiaoshi:"教师资格证",computer:"计算机等级考试",gongkao:"公务员考试"};
+var LV={beginner:"基础薄弱",medium:"有一定基础",good:"基础较好"};
+var TM={rush:"不到1个月",normal:"1-3个月",long:"3个月以上"};
+
+// ========== 智能推荐引擎 ==========
+var RECS={
+cet4:{beginner:{rush:{main:"星火英语四级真题",reason:"真题详解+模拟卷，解析超详细，适合短期冲刺刷题",sub:"闪过四级词汇速刷版",subr:"高频词+真题闪过，快速补齐词汇短板",plan:"每天刷1套真题并精读错题 → 碎片时间背闪过词汇 → 考前3天专攻作文模板和听力",enc:"基础弱不可怕，坚持每天一套题，一个月足够突破！"},
+normal:{main:"星火英语四级真题",reason:"配套最全，从基础到冲刺一步到位",sub:"华研外语四级真题",subr:"上海交大出版社，题量大适合中期练手感",plan:"前2周打基础背词汇 → 中间4周刷10套真题 → 最后2周集中攻弱项",enc:"时间够用，按计划走稳拿425！"},
+long:{main:"华研外语四级真题",reason:"题量最大，适合长期系统训练",sub:"闪过四级词汇速刷版",subr:"词根记忆法，配合长期复习效果最好",plan:"前2个月背完核心词汇 → 中期系统刷真题 → 考前1个月模拟冲刺",enc:"时间充裕是你的优势，一步一个脚印一定能高分通过！"}},
+medium:{rush:{main:"星火英语四级真题",reason:"真题解析详尽，适合有基础冲高分的同学",sub:"华研外语四级真题",subr:"多一套题多一分把握",plan:"直接刷近5年真题 → 重点攻克听力和阅读 → 考前一天复习错题",enc:"有基础冲刺更轻松，保持手感稳过！"},
+normal:{main:"星火英语四级真题",reason:"口碑最好，解析最全",sub:"闪过四级词汇速刷版",subr:"查漏补缺好帮手",plan:"系统刷真题+背词汇 → 每周一次模拟考 → 针对性提升",enc:"按部就班，425不在话下！"},
+long:{main:"华研外语四级真题",reason:"题量丰富，配合长期计划效果最佳",sub:"星火英语四级真题",subr:"两套交替练习更有保障",plan:"日常背词+刷题 → 每月一次全真模拟 → 长期积累稳步提升",enc:"持之以恒，高分等着你！"}},
+good:{rush:{main:"星火英语四级真题",reason:"解析到位，快速刷完即可上考场",sub:"闪过四级词汇速刷版",subr:"考前查漏补缺",plan:"刷3套真题找手感 → 重点看错题 → 轻松上考场",enc:"基础好就是底气，正常发挥稳过！"},
+normal:{main:"星火英语四级真题",reason:"经典之选，高分必备",sub:"华研外语四级真题",subr:"多练一套多一分把握",plan:"刷真题+背高频词 → 专项提升弱项 → 冲击550+",enc:"冲高分！让四级成为你的优势！"},
+long:{main:"华研外语四级真题",reason:"题量充足，冲击600分的利器",sub:"星火英语四级真题",subr:"双保险，万无一失",plan:"系统刷题+深度分析 → 听说读写全面提升 → 目标600+",enc:"目标600不是梦，按计划去冲！"}}},
+cet6:{beginner:{rush:{main:"星火英语六级真题",reason:"十合一通关，内容最全面，短期冲刺首选",sub:"新东方六级词汇联想记忆法",subr:"俞敏洪绿宝书，记词效率高",plan:"每天1套真题+50个高频词 → 重点攻听力和翻译 → 考前复习错题本",enc:"六级确实难，但冲一冲就有希望！"},
+normal:{main:"华研外语六级真题",reason:"淘金式详解，解析深入浅出",sub:"新东方六级词汇联想记忆法",subr:"词根+联想，背词不再枯燥",plan:"前3周系统刷题 → 中间3周专项提升 → 最后2周全真模拟",enc:"一步一个脚印，六级没你想的那么难！"},
+long:{main:"星火英语六级真题",reason:"十合一体系最全，长期复习最佳搭档",sub:"华研外语六级真题",subr:"两套交替练，360度无死角",plan:"前2月打基础 → 中期系统提升 → 最后1月冲刺模拟",enc:"长期坚持，高分证书指日可待！"}},
+medium:{rush:{main:"星火英语六级真题",reason:"基础不错，直接刷真题冲刺",sub:"华研外语六级真题",subr:"补充练习，查漏补缺",plan:"集中刷题2周 → 攻克弱项1周 → 考前模拟找状态",enc:"有基础有底气，冲就完了！"},
+normal:{main:"星火英语六级真题",reason:"最全真题库，配合你的基础正好",sub:"新东方六级词汇联想记忆法",subr:"词汇进阶，提升阅读速度",plan:"系统刷题 → 专项突破 → 考前冲刺",enc:"你离六级证书只差一个计划的距离！"},
+long:{main:"华研外语六级真题",reason:"题量大，长期练手感",sub:"星火英语六级真题",subr:"双剑合璧，稳拿高分",plan:"长期系统复习 → 听说读写全面突破 → 目标550+",enc:"坚持下去，六级高分就是你简历上的亮点！"}},
+good:{rush:{main:"星火英语六级真题",reason:"经典真题，快速刷完直接上考场",sub:"新东方六级词汇联想记忆法",subr:"考前快速过一遍高频词",plan:"刷3-5套真题 → 总结错题规律 → 轻松应考",enc:"实力在线，正常发挥就是高分！"},
+normal:{main:"星火英语六级真题",reason:"冲击600+的利器",sub:"华研外语六级真题",subr:"更多题目更多保障",plan:"刷真题+背词汇+练听力 → 每周模考 → 目标600",enc:"目标定高一点，600不是梦！"},
+long:{main:"华研外语六级真题",reason:"题海战术，高分保障",sub:"星火英语六级真题",subr:"两套交替，360度备考",plan:"长期系统复习 → 全面提升 → 冲刺600+",enc:"时间加努力，高分证书在向你招手！"}}},
+kaoyan:{beginner:{rush:{main:"肖秀荣考研政治1000题全家桶",reason:"考研人手一套，短期冲刺看这就够了",sub:"红宝书考研英语词汇",subr:"英语词汇是基础中的基础",plan:"政治主攻肖秀荣 → 英语每天背100词 → 数学刷张宇1000题",enc:"考研这条路很难，但选对资料就成功了一半！"},
+normal:{main:"肖秀荣考研政治1000题全家桶",reason:"肖四肖八+精讲精练，考研人标配",sub:"张宇考研数学强化36讲",subr:"高数线代概率论一网打尽",plan:"政治跟肖秀荣 → 数学跟张宇 → 英语背红宝书 → 专业课跟王道",enc:"资料选对，方向正确，剩下的就是坚持！"},
+long:{main:"张宇考研数学强化36讲",reason:"基础+强化一步到位",sub:"红宝书考研英语词汇",subr:"长期积累词汇量",plan:"前3月打基础 → 中期强化提升 → 最后3月冲刺模拟",enc:"早准备早受益，你的对手还没开始你已经领先了！"}},
+medium:{rush:{main:"肖秀荣考研政治1000题全家桶",reason:"考研政治不二之选",sub:"王道考研408计算机全套",subr:"专业课四合一，高效备考",plan:"政治背肖秀荣 → 专业课刷王道 → 英语保持手感",enc:"已经有一定基础，冲刺起来！"},
+normal:{main:"肖秀荣考研政治1000题全家桶",reason:"政治复习标杆",sub:"张宇考研数学强化36讲",subr:"数学强化利器",plan:"政治+英语+数学+专业课四线并进",enc:"考研是一场马拉松，你已经跑在正确赛道上！"},
+long:{main:"张宇考研数学强化36讲",reason:"从基础到强化全覆盖",sub:"红宝书考研英语词汇",subr:"词汇是考研英语的基石",plan:"系统化四科复习 → 定期自测 → 薄弱点专项突破",enc:"时间在你这边，好好利用！"}},
+good:{rush:{main:"肖秀荣考研政治1000题全家桶",reason:"快速过一遍，直接冲刺",sub:"王道考研408计算机全套",subr:"专业课最后冲刺",plan:"政治背肖四肖八 → 专业课查漏补缺 → 英语保持水平",enc:"基础扎实，冲刺阶段稳住就行！"},
+normal:{main:"肖秀荣考研政治1000题全家桶",reason:"政治高分必备",sub:"张宇考研数学强化36讲",subr:"冲击数学高分",plan:"四科均衡复习 → 强项保持弱项补强 → 目标高分上岸",enc:"冲985/211，资料+努力=上岸！"},
+long:{main:"张宇考研数学强化36讲",reason:"考研数学经典，冲击140+",sub:"红宝书考研英语词汇",subr:"冲击英语80+",plan:"全年系统复习 → 定期模拟 → 目标高分上岸",enc:"你能走得更高更远，加油！"}}},
+jiaoshi:{beginner:{main:"中公教资综合素质+教育知识",reason:"教材+真题+预测卷三位一体，零基础也能过",sub:"山香教资幼儿园保教知识",subr:"补充练习，覆盖面更全",plan:"先通读教材理解概念 → 刷真题找感觉 → 考前背重点考点",enc:"教资不难，认真准备一次过！"},
+medium:{main:"中公教资综合素质+教育知识",reason:"中公品牌，教资首选",sub:"山香教资幼儿园保教知识",subr:"山香也是老牌，搭配使用更稳",plan:"系统复习教材 → 刷真题 → 模拟面试 → 一次拿证",enc:"你有基础，稳扎稳打一定能过！"},
+good:{main:"中公教资综合素质+教育知识",reason:"快速过一遍重点，轻松拿证",sub:"山香教资幼儿园保教知识",subr:"多一本参考多一分把握",plan:"快速过教材 → 刷真题练手 → 面试准备 → 轻松拿证",enc:"对你来说就是走个流程，没问题！"}},
+computer:{beginner:{main:"未来教育计算机二级MS Office",reason:"视频+题库+模拟，零基础入门首选",sub:"未来教育计算机二级Python",subr:"如果对编程感兴趣可以试试Python",plan:"看视频课打基础 → 刷题库练操作 → 考前模拟找手感",enc:"二级不难，用心准备就能过！"},
+medium:{main:"未来教育计算机二级MS Office",reason:"题库最全，刷题首选",sub:"未来教育计算机二级Python",subr:"多一张Python证书更有竞争力",plan:"刷完整题库 → 攻克难点 → 轻松拿证",enc:"已经会了基础，刷完题库就稳了！"},
+good:{main:"未来教育计算机二级MS Office",reason:"快速过题库，直接考证",sub:"未来教育计算机二级Python",subr:"技多不压身",plan:"过一遍题库 → 模拟考几次 → 直接上考场",enc:"对你来说小菜一碟，快去拿证！"}},
+gongkao:{beginner:{main:"中公国家公务员一本通",reason:"行测+申论全覆盖，零基础入门首选",sub:"粉笔公考行测5000题",subr:"刷题神器，5000道真题分类练习",plan:"先看教材学方法 → 刷粉笔5000题 → 考前模拟套题",enc:"考公贵在坚持，资料选对就成功了一半！"},
+medium:{main:"粉笔公考行测5000题",reason:"5000道真题，题海战术最有效",sub:"中公国家公务员一本通",subr:"教材作为参考，查漏补缺",plan:"大量刷题 → 总结技巧 → 模拟考试 → 查漏补缺",enc:"有基础更要刷题，量变产生质变！"},
+good:{main:"粉笔公考行测5000题",reason:"冲刺高分的刷题利器",sub:"中公国家公务员一本通",subr:"系统复习知识点",plan:"刷题保持手感 → 查漏补缺 → 重点突破申论 → 冲刺上岸",enc:"你离上岸只差一个坚持！"}}
+};
+
+function recommend(ans){
+  var ex=ans.exam||'cet4',lv=ans.level||'medium',tm=ans.time||'normal';
+  var catRecs=RECS[ex]||RECS['cet4'];
+  var lvRecs=catRecs[lv]||catRecs['medium'];
+  var rec=lvRecs[tm]||lvRecs['normal'];
+
+  // Build analysis
+  var examName=EN[ex]||'未知考试';
+  var lvName=LV[lv]||'有一定基础';
+  var tmName=TM[tm]||'1-3个月';
+  var style=ans.style||'';
+  var styText=style==='video'?'喜欢看视频学习':(style==='class'?'喜欢报班系统学':'喜欢看书刷题');
+
+  var analysis={
+    profile:'一位正在准备'+examName+'的同学，目前'+lvName+'，备考时间'+tmName+'，'+styText+'。',
+    mainBook:rec.main,mainReason:rec.reason,
+    subBook:rec.sub,subReason:rec.subr,
+    plan:rec.plan,encouragement:rec.enc
+  };
+
+  // Match products
+  var products=[];
+  for(var i=0;i<DB.length;i++){
+    var p=DB[i];
+    if(p.c===ex||rec.main.indexOf(p.n)>=0||p.n.indexOf(rec.main)>=0||(rec.sub&&(p.n.indexOf(rec.sub)>=0||rec.sub.indexOf(p.n)>=0))){
+      products.push(p);
+    }
+  }
+  if(!products.length){for(var i=0;i<DB.length;i++){if(DB[i].c===ex)products.push(DB[i])}}
+  if(products.length>4)products=products.slice(0,4);
+
+  return {success:true,analysis:analysis,products:products};
+}
+
+// ========== Quiz ==========
+var QS=[
+  {id:'exam',q:'你想考什么证书？',hint:'选一个你最想拿下的',
+    o:[{v:'cet4',ico:'📝',l:'英语四级',d:'大学必过第一关'},{v:'cet6',ico:'🎯',l:'英语六级',d:'冲刺高分拿证书'},{v:'kaoyan',ico:'📚',l:'考研',d:'政治+英语+数学'},{v:'jiaoshi',ico:'👩‍🏫',l:'教师资格证',d:'当老师必备'},{v:'computer',ico:'💻',l:'计算机二级',d:'MS Office / Python'},{v:'gongkao',ico:'🏛',l:'公务员考试',d:'行测+申论'}]},
+  {id:'level',q:'你目前基础怎么样？',hint:'诚实选择，结果才准',
+    o:[{v:'beginner',ico:'🌱',l:'基础薄弱',d:'几乎从零开始'},{v:'medium',ico:'🌿',l:'有一定基础',d:'学过但不扎实'},{v:'good',ico:'🌳',l:'基础较好',d:'系统学过，需要拔高'}]},
+  {id:'time',q:'还有多少备考时间？',hint:'时间不同，策略完全不同',
+    o:[{v:'rush',ico:'⚡',l:'不到1个月',d:'紧急冲刺阶段'},{v:'normal',ico:'📅',l:'1-3个月',d:'正常备考节奏'},{v:'long',ico:'🗓',l:'3个月以上',d:'从容系统准备'}]},
+  {id:'style',q:'你喜欢怎么学习？',hint:'选最舒服的方式',
+    o:[{v:'book',ico:'📖',l:'看书刷题',d:'纸质书+真题练习'},{v:'video',ico:'📺',l:'看视频课',d:'跟着老师系统学'},{v:'class',ico:'🏫',l:'报班跟学',d:'有老师带更安心'}]},
+  {id:'budget',q:'预算大概多少？',hint:'用于买资料的总预算',
+    o:[{v:'50',ico:'💴',l:'50元以内',d:'精打细算型'},{v:'100',ico:'💵',l:'50-100元',d:'正常预算'},{v:'200',ico:'💸',l:'100-200元',d:'愿意投资'},{v:'',ico:'🤔',l:'没概念',d:'你先帮我推荐'}]}
+];
+var ci=0,ans={},sv=null;
+
+function rq(i){
+  if(i>=QS.length){doSubmit();return}
+  var q=QS[i];g('qQ').textContent=q.q;g('qH').textContent=q.hint;sv=ans[q.id]||null;
+  var h='';q.o.forEach(function(o){var s=sv===o.v?' s':'';h+='<div class="qoi'+s+'" data-v="'+o.v+'" onclick="sel(this,\''+o.v+'\')"><span class="qic">'+o.ico+'</span><div><div style="font-size:14px;font-weight:500">'+o.l+'</div><div style="font-size:11px;color:#94a3b8">'+o.d+'</div></div><span class="qar">✓</span></div>'});
+  g('qOps').innerHTML=h;ub();
+}
+function sel(e,v){document.querySelectorAll('.qoi').forEach(function(o){o.classList.remove('s')});e.classList.add('s');sv=v;ans[QS[ci].id]=v;ub()}
+function ub(){var b=g('btnN');b.disabled=!sv;b.textContent=ci===QS.length-1?(sv?'🚀 开始AI推荐':'先选一个'):(sv?'下一题 →':'先选一个 →')}
+function nq(){if(!sv)return;if(ci<QS.length-1){ci++;sv=ans[QS[ci].id]||null;rq(ci);g('qcard').scrollIntoView({behavior:'smooth',block:'center'})}else doSubmit()}
+
+function doSubmit(){
+  g('qz').classList.add('h');g('lcard').classList.add('on');g('rs').classList.remove('on');
+  var txts=['🔬 正在分析你的考试目标...','🎯 匹配最适合的备考资料...','📝 制定个性化学习建议...','⏳ 马上就好...'];var j=0;
+  var iv=setInterval(function(){g('lDesc').textContent=txts[j%txts.length];j++},1500);
+  setTimeout(function(){
+    clearInterval(iv);g('lcard').classList.remove('on');
+    var data=recommend(ans);
+    renderRes(data);
+  },2000);
+}
+
+function renderRes(data){
+  var a=data.analysis||{},ps=data.products||[],h='';
+  if(a.profile)h+='<div class="rh"><div class="rht">✅ 分析完成！你的专属推荐如下</div><div class="rp">'+esc(a.profile)+'</div></div>';
+  ps.forEach(function(p,i){
+    var m=i===0,cls=m?'rc m':'rc';h+='<div class="'+cls+'"><div class="rn">'+esc(p.n||'')+'</div><div class="rsub">'+esc(p.s||'')+'</div>';
+    if(m&&a.mainReason)h+='<div class="rre">💡 '+esc(a.mainReason)+'</div>';
+    else if(!m&&a.subReason)h+='<div class="rre">💡 '+esc(a.subReason)+'</div>';
+    h+='<div class="rm"><span class="st">⭐ '+(p.r||'4.8')+'</span><span>已售 '+fmt(p.sd||0)+'</span><span>'+esc(p.f||'')+'</span></div>';
+    h+='<div class="rpr"><span class="pr">¥'+(p.p||0)+'</span><span class="ti">（官方店铺价）</span></div>';
+    h+='<a href="'+esc(p.l||'#')+'" target="_blank" rel="nofollow" class="bb">🛒 去淘宝查看详情 👈</a><div class="bf">🔐 跳转至淘宝/天猫官方店铺 · 平台保障售后</div></div>';
+  });
+  if(a.plan)h+='<div class="pl"><div class="pt">📋 专属学习计划</div><div class="px">'+esc(a.plan).replace(/\n/g,'<br>')+'</div></div>';
+  if(a.encouragement)h+='<div class="en">💪 '+esc(a.encouragement)+'</div>';
+  g('rCnt').innerHTML=h;g('rs').classList.add('on');g('rs').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function rst(){ci=0;ans={};sv=null;g('qz').classList.remove('h');g('lcard').classList.remove('on');g('rs').classList.remove('on');rq(0);g('qcard').scrollIntoView({behavior:'smooth',block:'center'})}
+
+function renderCats(){
+  var bs=['h0','h1','h2','h3','h4','h5'],h='';CATS.forEach(function(c,i){h+='<a class="cc" href="category.html?c='+c.id+'"><span class="ci">'+c.ico+'</span><div class="cn">'+c.n+'</div><div class="cd">'+c.d+'</div><span class="cb '+bs[i]+'">'+c.b.replace(/[🔥💪🏆✨📈🎖]/g,'').trim()+'</span></a>'});g('cGrid').innerHTML=h}
+
+function esc(s){if(!s)return'';var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function fmt(n){if(n>=10000)return(n/10000).toFixed(1)+'万';if(n>=1000)return(n/1000).toFixed(1)+'k';return String(n)}
+function g(id){return document.getElementById(id)}
+
+g('btnN').addEventListener('click',nq);
+rq(0);renderCats();
+</script>
+</body>
+</html>
