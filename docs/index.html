@@ -249,14 +249,15 @@ var ci=0,ans={},sv=null;
 
 function rq(i){
   if(i>=QS.length){doSubmit();return}
-  var q=QS[i];g('qQ').textContent=q.q;g('qH').textContent=q.hint;sv=ans[q.id]||null;
+  var q=QS[i];sv=ans.hasOwnProperty(q.id)?ans[q.id]:null;
+  g('qQ').textContent=q.q;g('qH').textContent=q.hint;
   var h='';q.o.forEach(function(o){var s=sv===o.v?' s':'';h+='<div class="qoi'+s+'" data-v="'+o.v+'" onclick="sel(this,\''+o.v+'\')"><span class="qic">'+o.ico+'</span><div><div style="font-size:14px;font-weight:500">'+o.l+'</div><div style="font-size:11px;color:#94a3b8">'+o.d+'</div></div><span class="qar">✓</span></div>'});
   g('qOps').innerHTML=h;ub();
 }
 function sel(e,v){document.querySelectorAll('.qoi').forEach(function(o){o.classList.remove('s')});e.classList.add('s');sv=v;ans[QS[ci].id]=v;ub()}
-function ub(){var b=g('btnN');var bb=g('btnB');b.disabled=!sv;b.textContent=ci===QS.length-1?(sv?'🚀 开始AI推荐':'先选一个'):(sv?'下一题 →':'先选一个 →');bb.classList.toggle('hidden',ci===0)}
-function nq(){if(!sv)return;if(ci<QS.length-1){ci++;sv=ans[QS[ci].id]||null;rq(ci);g('qcard').scrollIntoView({behavior:'smooth',block:'center'})}else doSubmit()}
-function prevQ(){if(ci>0){ci--;sv=ans[QS[ci].id]||null;rq(ci);g('qcard').scrollIntoView({behavior:'smooth',block:'center'})}}
+function ub(){var b=g('btnN');var bb=g('btnB');var hasSel=sv!==null&&sv!==undefined;b.disabled=!hasSel;b.textContent=ci===QS.length-1?(hasSel?'🚀 开始AI推荐':'先选一个'):(hasSel?'下一题 →':'先选一个 →');bb.classList.toggle('hidden',ci===0)}
+function nq(){if(sv===null||sv===undefined)return;if(ci<QS.length-1){ci++;sv=ans.hasOwnProperty(QS[ci].id)?ans[QS[ci].id]:null;rq(ci);g('qcard').scrollIntoView({behavior:'smooth',block:'center'})}else doSubmit()}
+function prevQ(){if(ci>0){ci--;sv=ans.hasOwnProperty(QS[ci].id)?ans[QS[ci].id]:null;rq(ci);g('qcard').scrollIntoView({behavior:'smooth',block:'center'})}}
 
 function doSubmit(){
   // 没概念 → AI自动选预算
