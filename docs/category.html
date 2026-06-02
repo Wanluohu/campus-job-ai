@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>备考资料推荐 - AI智能选书</title>
+<style>
+:root{--p:#4F46E5;--bg:#F0F2F7;--c:#FFF;--t:#1E293B;--t2:#64748B;--s:0 4px 12px rgba(0,0,0,.06);--sl:0 8px 30px rgba(0,0,0,.08);--r:18px;--rs:12px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--t);line-height:1.6;min-height:100vh}
+a{text-decoration:none;color:inherit}
+
+.tb{background:linear-gradient(135deg,#0F172A,#312E81);color:#fff;padding:15px 18px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100}
+.tbb{font-size:22px;cursor:pointer;padding:6px;color:#fff;border-radius:8px;transition:all .2s}.tbb:hover{background:rgba(255,255,255,.1)}
+.tbt{font-size:18px;font-weight:800}.tbs{font-size:11px;color:rgba(255,255,255,.6)}
+
+.m{max-width:540px;margin:0 auto;padding:22px 16px}
+.ban{background:linear-gradient(135deg,#EEF2FF,#E0E7FF);border-radius:var(--r);padding:20px;margin-bottom:22px;display:flex;align-items:center;gap:14px;border:1px solid #DDD6FE}
+.bic{font-size:44px;flex-shrink:0}.bt{font-size:16px;font-weight:800;margin-bottom:4px}.bd{font-size:12px;color:var(--t2);line-height:1.6}
+
+.cs{display:flex;gap:10px;overflow-x:auto;padding-bottom:18px;margin-bottom:10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.cs::-webkit-scrollbar{display:none}
+.ccp{flex-shrink:0;padding:9px 18px;border-radius:22px;font-size:13px;font-weight:700;cursor:pointer;transition:all .25s;white-space:nowrap;background:var(--c);color:var(--t2);border:2px solid #E2E8F0}
+.ccp.ac,.ccp:hover{background:#4F46E5;color:#fff;border-color:#4F46E5;box-shadow:0 4px 15px rgba(79,70,229,.3)}
+
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.st{font-size:21px;font-weight:900}.sc{font-size:13px;color:var(--t2);background:#F1F5F9;padding:4px 12px;border-radius:12px}
+
+.pg{display:flex;flex-direction:column;gap:16px;margin-bottom:36px}
+.pc{background:var(--c);border-radius:var(--r);padding:20px;box-shadow:var(--s);transition:all .25s;border:1px solid #F1F5F9}
+.pc:hover{transform:translateY(-2px);box-shadow:var(--sl);border-color:#DDD6FE}
+.prw{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px}
+.pcv{width:84px;height:112px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:36px;color:#fff}
+.pcv.g0{background:linear-gradient(135deg,#667eea,#764ba2)}.pcv.g1{background:linear-gradient(135deg,#f093fb,#f5576c)}
+.pcv.g2{background:linear-gradient(135deg,#4facfe,#00f2fe)}.pcv.g3{background:linear-gradient(135deg,#43e97b,#38f9d7)}
+.pcv.g4{background:linear-gradient(135deg,#fa709a,#fee140)}.pcv.g5{background:linear-gradient(135deg,#a8edea,#fed6e3)}
+.pnf{flex:1;min-width:0}
+.pn{font-size:16px;font-weight:800;margin-bottom:3px;line-height:1.35}.ps{font-size:12px;color:#94A3B8;margin-bottom:8px}
+.ptg{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+.ptg span{font-size:11px;padding:4px 10px;border-radius:14px;background:#F1F5F9;color:var(--t2);font-weight:500}
+.ptg .st{color:#F59E0B;font-weight:700}
+.ppl{display:flex;align-items:baseline;gap:8px}.ppr{font-size:26px;font-weight:900;color:#EF4444}.ppb{font-size:12px;color:#94A3B8}
+
+.bb{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border-radius:14px;text-align:center;font-size:15px;font-weight:700;color:#fff;transition:all .25s;background:linear-gradient(135deg,#FF6B35,#F53B14);letter-spacing:.5px}
+.bb:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(245,59,20,.3)}.bb:active{transform:scale(.97)}
+.bf{text-align:center;margin-top:8px;font-size:11px;color:#94A3B8}
+
+.cta{background:linear-gradient(140deg,#1E1B4B,#312E81);border-radius:var(--r);padding:28px 20px;text-align:center;margin-bottom:36px;color:#fff}
+.cti{font-size:48px;display:block;margin-bottom:12px}.ctt{font-size:19px;font-weight:800;margin-bottom:6px}.ctd{font-size:14px;color:rgba(255,255,255,.7);margin-bottom:18px}
+.ctb{display:inline-block;padding:14px 40px;border-radius:30px;background:linear-gradient(135deg,#FBBF24,#F59E0B);color:#1E1B4B;font-size:15px;font-weight:800;transition:all .25s}
+.ctb:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(251,191,36,.4)}
+
+.ft{text-align:center;padding:28px 0 48px;color:var(--t2);font-size:12px;line-height:2.2}.ft a{color:#4F46E5;font-weight:600}
+.ld{text-align:center;padding:40px;color:var(--t2)}
+</style>
+</head>
+<body>
+
+<div class="tb"><a href="index.html" class="tbb">←</a><div><div class="tbt" id="tt">备考资料推荐 📖</div><div class="tbs">✨ AI精选 · 全网口碑最佳</div></div></div>
+
+<div class="m">
+<div class="ban"><span class="bic" id="bic">📖</span><div><div class="bt" id="btx">🏆 精选备考好书</div><div class="bd">📊 以下书籍均为全网销量领先、口碑最好的版本，点击可直接前往淘宝品牌店铺购买 🛒</div></div></div>
+
+<div class="cs" id="chips"></div>
+
+<div class="sh"><div class="st" id="stx">📚 推荐书单</div><div class="sc" id="sct">共0本</div></div>
+<div class="pg" id="grid"><div class="ld">加载中...</div></div>
+
+<div class="cta"><span class="cti">🤖</span><div class="ctt">不知道选哪本？让AI帮你挑</div><div class="ctd">回答5个问题，30秒出专属推荐</div><a href="index.html" class="ctb">🎯 开始AI智能测评</a></div>
+
+<div class="ft"><a href="index.html">🏠 返回首页</a><br>📚 © 2026 校园AI助手 · 让每本资料都买得值</div>
+</div>
+
+<script>
+var DB=[
+{n:"星火英语四级真题",s:"备考2026年12月",p:54.6,c:"cet4",f:"真题详解+模拟卷",r:4.8,sd:23000,l:"https://s.click.taobao.com/ZoCXwIl"},
+{n:"华研外语四级真题",s:"备考2026年6月",p:26.1,c:"cet4",f:"专四专项训练全套",r:4.7,sd:18000,l:"https://s.click.taobao.com/tIVxvIl"},
+{n:"闪过四级词汇速刷版",s:"考前急救组合",p:37.3,c:"cet4",f:"重点词+真题闪过",r:4.9,sd:56000,l:"https://s.click.taobao.com/oVSnvIl"},
+{n:"星火英语六级真题",s:"备考2026年6月",p:15.8,c:"cet6",f:"十合一通关+听力",r:4.8,sd:15000,l:"https://s.click.taobao.com/1UvWO9l"},
+{n:"华研外语六级真题",s:"淘金式详解",p:26.4,c:"cet6",f:"真题+词汇+听力+写作",r:4.7,sd:12000,l:"https://s.click.taobao.com/j04PO9l"},
+{n:"新东方六级词汇联想记忆法",s:"俞敏洪绿宝书",p:30.6,c:"cet6",f:"词根+联想双效记忆",r:4.8,sd:34000,l:"https://s.click.taobao.com/qlbXvIl"},
+{n:"肖秀荣考研政治1000题全家桶",s:"2027考研必备",p:32.1,c:"kaoyan",f:"肖四肖八+精讲精练",r:4.9,sd:89000,l:"https://s.click.taobao.com/VfjUvIl"},
+{n:"张宇考研数学强化36讲",s:"基础30讲+1000题",p:51,c:"kaoyan",f:"高数+线代+概率论",r:4.8,sd:45000,l:"https://s.click.taobao.com/68cQvIl"},
+{n:"红宝书考研英语词汇",s:"2027考研必备",p:59.9,c:"kaoyan",f:"词汇+真题+长难句",r:4.7,sd:62000,l:"https://s.click.taobao.com/Egh8O9l"},
+{n:"王道考研408计算机全套",s:"2027版四门专业课",p:25,c:"kaoyan",f:"网课+教材+真题笔记",r:4.9,sd:31000,l:"https://s.click.taobao.com/h6z5O9l"},
+{n:"中公教资综合素质+教育知识",s:"中职教师证资格",p:88,c:"jiaoshi",f:"教材+真题+预测卷",r:4.8,sd:41000,l:"https://s.click.taobao.com/BWSCvIl"},
+{n:"山香教资幼儿园保教知识",s:"2026新版全4册",p:16.1,c:"jiaoshi",f:"综合素质+保教知识",r:4.7,sd:28000,l:"https://s.click.taobao.com/htwwN9l"},
+{n:"未来教育计算机二级MS Office",s:"备考2026年9月",p:15.8,c:"computer",f:"上机题库+核心考点",r:4.8,sd:76000,l:"https://s.click.taobao.com/mPUtN9l"},
+{n:"未来教育计算机二级Python",s:"2026年考试",p:19.9,c:"computer",f:"题库+视频+模拟",r:4.6,sd:18000,l:"https://s.click.taobao.com/DbdpN9l"},
+{n:"中公国家公务员一本通",s:"2027国考备考",p:40,c:"gongkao",f:"笔试一本通+题库",r:4.8,sd:55000,l:"https://s.click.taobao.com/lnFwuIl"},
+{n:"粉笔公考行测5000题",s:"2027国省考通用",p:38.2,c:"gongkao",f:"决战行测五千题",r:4.9,sd:43000,l:"https://s.click.taobao.com/pzTuuIl"}
+];
+var CATS=[{id:"cet4",n:"英语四级",ico:"📝"},{id:"cet6",n:"英语六级",ico:"🎯"},{id:"kaoyan",n:"考研专区",ico:"📚"},{id:"jiaoshi",n:"教师资格证",ico:"👩‍🏫"},{id:"computer",n:"计算机等级",ico:"💻"},{id:"gongkao",n:"公务员考试",ico:"🏛"}];
+var CM={};CATS.forEach(function(c){CM[c.id]=c});
+var NM={cet4:"英语四级",cet6:"英语六级",kaoyan:"考研",jiaoshi:"教师资格证",computer:"计算机等级考试",gongkao:"公务员考试"};
+
+var p=new URLSearchParams(window.location.search);var cat=p.get('c')||'cet4';var cn=NM[cat]||cat;var icon=CM[cat]?CM[cat].ico:'📖';
+
+g('tt').textContent=cn+'备考资料推荐 📖';g('bic').textContent=icon;g('btx').textContent='🏆 精选'+cn+'备考好书';g('stx').textContent='📚 '+cn+'推荐书单';
+
+var ps=[];DB.forEach(function(p){if(p.c===cat)ps.push(p)});
+g('sct').textContent='共'+ps.length+'本';
+
+var chips='';CATS.forEach(function(c){chips+='<a class="ccp'+(c.id===cat?' ac':'')+'" href="category.html?c='+c.id+'">'+c.ico+' '+c.n+'</a>'});
+g('chips').innerHTML=chips;
+
+var gs=['g0','g1','g2','g3','g4','g5'],h='';
+ps.forEach(function(p,i){h+='<div class="pc"><div class="prw"><div class="pcv '+gs[i%6]+'">📖</div><div class="pnf"><div class="pn">'+esc(p.n)+'</div><div class="ps">'+esc(p.s||'')+'</div><div class="ptg"><span class="st">⭐ '+p.r+'</span><span>已售 '+fmt(p.sd)+'</span><span>'+esc(p.f||'')+'</span></div><div class="ppl"><span class="ppr">¥'+p.p+'</span><span class="ppb">官方店铺价</span></div></div></div><a href="'+esc(p.l||'#')+'" target="_blank" rel="nofollow" class="bb">🛒 去淘宝查看详情 · ¥'+p.p+' 👈</a><div class="bf">🔐 跳转至淘宝/天猫官方店铺 · 平台保障售后</div></div>'});
+if(!ps.length)h='<div class="ld">暂无商品数据</div>';
+g('grid').innerHTML=h;
+
+function esc(s){if(!s)return'';var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function fmt(n){if(n>=10000)return(n/10000).toFixed(1)+'万';if(n>=1000)return(n/1000).toFixed(1)+'k';return String(n)}
+function g(id){return document.getElementById(id)}
+</script></body></html>
